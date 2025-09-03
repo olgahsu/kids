@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小朋友英文對話學習</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS 配置，確保 Inter 字體被應用 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="p-6 bg-blue-50 font-inter">
+    <div class="container mx-auto p-4 bg-white rounded-3xl shadow-xl my-8 max-w-3xl">
+        <h1 class="text-4xl font-extrabold text-center text-blue-700 mb-8 pt-4">小朋友英文對話學習</h1>
+        <p class="text-center text-gray-600 mb-10">點擊播放按鈕，聽聽這些日常英文對話怎麼說！</p>
+
+        <!-- Getting Up in the Morning -->
+        <div class="card bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <h2 class="section-title text-blue-800 text-3xl font-bold mb-5 text-center">早上起床 (Getting Up in the Morning)</h2>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Good morning, sleepyhead! Time to wake up.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Good morning, sleepyhead! Time to wake up.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 早安，小懶蟲！該起床囉。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> Good morning, Mommy/Daddy!
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Good morning, Mommy or Daddy!')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 早安，媽咪/爹地！</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Did you sleep well?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Did you sleep well?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 睡得好嗎？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> Yes, I slept very well.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Yes, I slept very well.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 是的，我睡得很好。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> No, I'm still a little sleepy.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('No, I am still a little sleepy.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 沒有，我還有點想睡。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Let's get ready for school. Go brush your teeth.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Let us get ready for school. Go brush your teeth.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 我們準備上學吧。去刷牙。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> Okay!
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Okay!')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 好！</p>
+            </div>
+        </div>
+
+        <!-- Breakfast Time -->
+        <div class="card bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <h2 class="section-title text-blue-800 text-3xl font-bold mb-5 text-center">早餐時間 (Breakfast Time)</h2>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> What do you want for breakfast today?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('What do you want for breakfast today?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 今天早餐想吃什麼？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> I want some cereal/toast/eggs, please.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('I want some cereal, toast, or eggs, please.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 我想要一些麥片/吐司/雞蛋，謝謝。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Here you go. Don't forget to eat your fruit.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Here you go. Do not forget to eat your fruit.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 給你。別忘了吃水果喔。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> Thank you! Can I have some milk?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Thank you! Can I have some milk?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 謝謝！我可以喝點牛奶嗎？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Of course. Here's your milk.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Of course. Here is your milk.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 當然。這是你的牛奶。</p>
+            </div>
+        </div>
+
+        <!-- Getting Dressed -->
+        <div class="card bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <h2 class="section-title text-blue-800 text-3xl font-bold mb-5 text-center">穿衣服 (Getting Dressed)</h2>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> What do you want to wear today?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('What do you want to wear today?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 你今天想穿什麼？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> I want to wear my blue shirt and green pants.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('I want to wear my blue shirt and green pants.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 我想穿我的藍色襯衫和綠色褲子。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> That's a good choice. Can you put on your socks?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('That is a good choice. Can you put on your socks?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 這是個好選擇。你能穿上你的襪子嗎？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> Yes, I can!
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Yes, I can!')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 是的，我可以！</p>
+            </div>
+        </div>
+
+        <!-- Going to School/Outside -->
+        <div class="card bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <h2 class="section-title text-blue-800 text-3xl font-bold mb-5 text-center">去學校/外出 (Going to School/Outside)</h2>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> It's time to go. Do you have your backpack?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('It is time to go. Do you have your backpack?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 該走了。你帶背包了嗎？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> Yes, I have it!
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Yes, I have it!')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 是的，我帶了！</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Let's put on your shoes.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Let us put on your shoes.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 我們來穿鞋子吧。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> Can we walk to school today?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Can we walk to school today?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 我們今天可以走路去學校嗎？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Yes, we can. Hold my hand.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Yes, we can. Hold my hand.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 是的，可以。牽著我的手。</p>
+            </div>
+        </div>
+
+        <!-- Playing -->
+        <div class="card bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <h2 class="section-title text-blue-800 text-3xl font-bold mb-5 text-center">玩耍 (Playing)</h2>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child 1:</span> Do you want to play with me?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Do you want to play with me?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子 1:</span> 你想和我一起玩嗎？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child 2:</span> Yes, what should we play?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Yes, what should we play?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子 2:</span> 是的，我們玩什麼呢？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child 1:</span> Let's play hide-and-seek!
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Let us play hide-and-seek!')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子 1:</span> 我們來玩捉迷藏吧！</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child 2:</span> Okay! You count first.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Okay! You count first.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子 2:</span> 好！你先數。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child 1:</span> One, two, three...
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('One, two, three...')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子 1:</span> 一、二、三...</p>
+            </div>
+        </div>
+
+        <!-- Mealtime (Lunch/Dinner) -->
+        <div class="card bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <h2 class="section-title text-blue-800 text-3xl font-bold mb-5 text-center">用餐時間 (Mealtime: Lunch/Dinner)</h2>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Dinner is ready! Please wash your hands.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Dinner is ready! Please wash your hands.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 晚餐準備好了！請洗手。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> Okay, I'm coming!
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Okay, I am coming!')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 好，我來了！</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> What's for dinner?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('What is for dinner?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 晚餐吃什麼？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> We have rice and chicken today.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('We have rice and chicken today.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 我們今天有飯和雞肉。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> Yummy! Can I have more?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Yummy! Can I have more?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 好好吃！我可以再來一點嗎？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Please eat all your vegetables.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Please eat all your vegetables.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 請把所有的蔬菜都吃光。</p>
+            </div>
+        </div>
+
+        <!-- Bedtime -->
+        <div class="card bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <h2 class="section-title text-blue-800 text-3xl font-bold mb-5 text-center">睡覺時間 (Bedtime)</h2>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> It's time to go to bed.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('It is time to go to bed.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 該睡覺了。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> But I'm not sleepy yet!
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('But I am not sleepy yet!')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 可是我還不睏！</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Let's read a story. Which book do you want?
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Let us read a story. Which book do you want?')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 我們來讀個故事吧。你想讀哪本書？</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> I want to read 'The Hungry Caterpillar'.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('I want to read The Hungry Caterpillar.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 我想讀《好餓的毛毛蟲》。</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Parent:</span> Good night, sweet dreams!
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Good night, sweet dreams!')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">家長:</span> 晚安，做個好夢！</p>
+            </div>
+            <div class="dialogue-pair flex flex-col mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                <p class="english-text text-lg font-semibold text-gray-700 mb-2"><span class="speaker font-bold text-blue-700">Child:</span> Good night, Mommy/Daddy! I love you.
+                    <button class="play-button bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-indigo-600" onclick="speakText('Good night, Mommy or Daddy! I love you.')">
+                        <svg class="play-icon w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        播放
+                    </button>
+                </p>
+                <p class="chinese-text text-base text-gray-600 mb-3"><span class="speaker font-bold text-blue-700">孩子:</span> 晚安，媽咪/爹地！我愛你。</p>
+            </div>
+        </div>
+
+        <!-- Character Dialogue Section -->
+        <div class="card bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <h2 class="section-title text-blue-800 text-3xl font-bold mb-5 text-center">✨ 角色對話 (Character Dialogue) ✨</h2>
+            <p class="text-center text-gray-600 mb-4">試著用英文和我們的學習夥伴說說話吧！</p>
+            <div id="chat-history" class="bg-gray-50 p-4 rounded-lg h-64 overflow-y-auto mb-4 border border-gray-200 flex flex-col">
+                <!-- Chat messages will appear here -->
+                <div class="text-center text-gray-500">歡迎來到對話時間！你可以問我任何簡單的英文問題喔！</div>
+            </div>
+            <div class="flex gap-2 items-center">
+                <input type="text" id="user-input" placeholder="在這裡輸入你的英文訊息..." class="flex-grow p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800">
+                <button id="mic-button" class="play-button bg-purple-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-purple-600">
+                    <svg class="play-icon w-5 h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.2-3c0 3-2.54 5.1-5.2 5.1S6.8 14 6.8 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.49 6-3.31 6-6.72h-1.8z"/>
+                    </svg>
+                    語音
+                </button>
+                <button id="send-button" class="play-button bg-green-500 text-white px-6 py-3 rounded-xl font-semibold transition-colors duration-300 inline-flex items-center justify-center space-x-2 cursor-pointer border-none shadow-md hover:bg-green-600">
+                    <svg class="play-icon w-5 h-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                    發送
+                </button>
+            </div>
+            <div id="loading-indicator" class="hidden text-center text-indigo-600 mt-2">
+                <span class="animate-pulse">思考中...</span>
+            </div>
+            <div id="speech-status" class="hidden text-center text-purple-600 mt-2">
+                <span class="animate-pulse">請說話...</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 檢查瀏覽器是否支援語音合成
+        if ('speechSynthesis' in window) {
+            const synth = window.speechSynthesis;
+
+            function speakText(text) {
+                // 如果目前有語音正在播放，先停止
+                if (synth.speaking) {
+                    synth.cancel();
+                }
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // 設定為美式英文
+                utterance.rate = 0.7; // 語速調整為 0.7，更慢一點，適合小朋友學習
+                utterance.pitch = 1.0; // 音高
+
+                // 尋找一個適合兒童的英文聲音
+                let voiceFound = false;
+                const voices = synth.getVoices();
+                for (let i = 0; i < voices.length; i++) {
+                    // 嘗試尋找美式英文且聽起來比較自然或兒童友善的聲音
+                    if (voices[i].lang === 'en-US' && (voices[i].name.includes('Google') || voices[i].name.includes('Samantha') || voices[i].name.includes('Alex'))) {
+                        utterance.voice = voices[i];
+                        voiceFound = true;
+                        break;
+                    }
+                }
+                // 如果沒有找到特定聲音，就使用預設聲音
+                if (!voiceFound && voices.length > 0) {
+                    utterance.voice = voices.find(voice => voice.lang === 'en-US') || voices[0];
+                }
+
+                synth.speak(utterance);
+            }
+
+            // 在語音服務載入後，重新獲取聲音列表
+            synth.onvoiceschanged = () => {
+                // 可以在這裡再次呼叫 speakText 確保聲音已載入
+                console.log("Voices loaded.");
+            };
+
+        } else {
+            // 如果瀏覽器不支援語音合成，顯示提示
+            console.warn("您的瀏覽器不支援語音合成。");
+            // 可以在頁面上顯示一個提示訊息給使用者
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 bg-red-500 text-white p-3 rounded-lg shadow-lg';
+            messageDiv.textContent = '抱歉，您的瀏覽器不支援語音播放功能。';
+            document.body.appendChild(messageDiv);
+            setTimeout(() => messageDiv.remove(), 5000); // 5秒後移除訊息
+        }
+
+        // Gemini API Integration for Character Dialogue
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const micButton = document.getElementById('mic-button'); // 新增麥克風按鈕
+        const chatHistoryDiv = document.getElementById('chat-history');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const speechStatus = document.getElementById('speech-status'); // 語音狀態顯示
+
+        // Speech Recognition API
+        let recognition;
+        let isRecognizing = false;
+
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.continuous = false; // 不會持續辨識，每次說話後會停止
+            recognition.interimResults = false; // 只返回最終結果
+            recognition.lang = 'en-US'; // 設定語音辨識語言為美式英文
+
+            recognition.onstart = () => {
+                isRecognizing = true;
+                micButton.classList.add('bg-red-500', 'hover:bg-red-600'); // 錄音時按鈕變紅
+                micButton.classList.remove('bg-purple-500', 'hover:bg-purple-600');
+                speechStatus.textContent = '請說話...';
+                speechStatus.classList.remove('hidden');
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript; // 將辨識結果填入輸入框
+                speechStatus.classList.add('hidden');
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                speechStatus.textContent = '語音辨識錯誤，請重試。';
+                speechStatus.classList.remove('hidden');
+                micButton.classList.remove('bg-red-500', 'hover:bg-red-600');
+                micButton.classList.add('bg-purple-500', 'hover:bg-purple-600');
+                isRecognizing = false;
+                setTimeout(() => speechStatus.classList.add('hidden'), 3000); // 3秒後隱藏錯誤訊息
+            };
+
+            recognition.onend = () => {
+                isRecognizing = false;
+                micButton.classList.remove('bg-red-500', 'hover:bg-red-600');
+                micButton.classList.add('bg-purple-500', 'hover:bg-purple-600');
+                if (!userInput.value) { // 如果沒有辨識到文字，隱藏提示
+                    speechStatus.classList.add('hidden');
+                }
+            };
+
+            micButton.addEventListener('click', () => {
+                if (isRecognizing) {
+                    recognition.stop();
+                } else {
+                    userInput.value = ''; // 清空輸入框，準備接收語音
+                    recognition.start();
+                }
+            });
+        } else {
+            // 如果瀏覽器不支援語音辨識，隱藏麥克風按鈕並顯示提示
+            micButton.classList.add('hidden');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'fixed bottom-4 right-4 bg-yellow-500 text-white p-3 rounded-lg shadow-lg';
+            messageDiv.textContent = '您的瀏覽器不支援語音轉文字功能。';
+            document.body.appendChild(messageDiv);
+            setTimeout(() => messageDiv.remove(), 5000);
+        }
+
+
+        // Function to add messages to chat history
+        function addMessageToChat(sender, message, isEnglish = true) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `p-2 rounded-lg mb-2 ${sender === 'user' ? 'bg-blue-100 self-end text-right' : 'bg-green-100 self-start text-left'}`;
+            messageElement.style.maxWidth = '80%';
+            messageElement.style.marginLeft = sender === 'user' ? 'auto' : '0';
+            messageElement.style.marginRight = sender === 'user' ? '0' : 'auto';
+
+            const senderSpan = document.createElement('span');
+            senderSpan.className = `font-bold ${sender === 'user' ? 'text-blue-700' : 'text-green-700'}`;
+            senderSpan.textContent = sender === 'user' ? '你: ' : '夥伴: ';
+
+            const messageText = document.createElement('span');
+            messageText.textContent = message;
+
+            messageElement.appendChild(senderSpan);
+            messageElement.appendChild(messageText);
+
+            chatHistoryDiv.appendChild(messageElement);
+            chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight; // Scroll to bottom
+
+            if (isEnglish && sender !== 'user' && 'speechSynthesis' in window) {
+                speakText(message); // Speak the character's English response
+            }
+        }
+
+        sendButton.addEventListener('click', async () => {
+            const prompt = userInput.value.trim();
+            if (prompt === '') return;
+
+            addMessageToChat('user', prompt);
+            userInput.value = ''; // Clear input field
+            loadingIndicator.classList.remove('hidden'); // Show loading indicator
+
+            try {
+                let chatHistory = [];
+                // Add a system instruction to guide the LLM's persona and language
+                chatHistory.push({ role: "user", parts: [{ text: `請以一個友善的兒童學習夥伴的身份，用簡單的英文回答這個問題。如果問題是中文，請嘗試理解並用簡單的英文回答。問題：${prompt}` }] });
+
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Canvas will automatically provide the API key
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                loadingIndicator.classList.add('hidden'); // Hide loading indicator
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    addMessageToChat('character', text);
+                } else {
+                    addMessageToChat('character', '抱歉，我現在無法回答。請再試一次。 (Sorry, I cannot answer right now. Please try again.)');
+                }
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                loadingIndicator.classList.add('hidden'); // Hide loading indicator
+                addMessageToChat('character', '發生了錯誤，請檢查網路連線或稍後再試。 (An error occurred. Please check your internet connection or try again later.)');
+            }
+        });
+
+        // Allow sending message with Enter key
+        userInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+    </script>
+</body>
+</html>

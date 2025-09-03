@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>國小英檢單字字卡</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 設定字體為 Inter，並確保中文字體顯示正常 */
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8; /* 淺灰色背景 */
+            display: flex;
+            flex-direction: column; /* 讓內容垂直排列 */
+            align-items: center; /* 讓內容置中 */
+            padding: 20px;
+        }
+
+        /* 類別區塊樣式 */
+        .category-section {
+            width: 100%;
+            max-width: 1200px; /* 限制最大寬度 */
+            margin-bottom: 30px; /* 類別區塊間距 */
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+        }
+
+        .category-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #1a202c; /* 深灰色標題 */
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #cbd5e0; /* 底部邊框 */
+        }
+
+        /* 字卡容器樣式 */
+        .flashcard-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* 卡片間距 */
+        }
+
+        /* 字卡樣式 */
+        .flashcard {
+            width: 280px; /* 固定寬度 */
+            height: 180px; /* 固定高度 */
+            perspective: 1000px; /* 3D 翻轉效果 */
+            cursor: pointer;
+            border-radius: 15px; /* 圓角 */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* 陰影 */
+            background-color: #ffffff; /* 卡片背景色 */
+            transition: transform 0.6s; /* 翻轉動畫 */
+            position: relative;
+            transform-style: preserve-3d; /* 保持 3D 效果 */
+        }
+
+        /* 翻轉效果 */
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* 字卡內容面 */
+        .flashcard-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden; /* 隱藏背面 */
+            border-radius: 15px;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        /* 正面樣式 */
+        .flashcard-front {
+            background-color: #e0f2f7; /* 淺藍色 */
+            color: #2c5282; /* 深藍色文字 */
+            font-size: 2.2rem; /* 較大字體 */
+        }
+
+        /* 背面樣式 */
+        .flashcard-back {
+            background-color: #ffe0b2; /* 淺橘色 */
+            color: #c2410c; /* 深橘色文字 */
+            transform: rotateY(180deg); /* 背面翻轉 180 度 */
+            font-size: 1.8rem; /* 中文翻譯字體 */
+        }
+
+        /* 印刷樣式調整 */
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+                margin: 0;
+                display: block; /* 讓卡片在列印時可以自動換行 */
+            }
+            .category-section {
+                page-break-before: always; /* 每個類別在新頁開始 */
+                box-shadow: none; /* 列印時移除陰影 */
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            .flashcard {
+                page-break-inside: avoid; /* 避免卡片被切斷 */
+                margin: 10px; /* 列印時的間距 */
+                display: inline-block; /* 讓卡片並排顯示 */
+            }
+            .flashcard.flipped {
+                transform: rotateY(0deg); /* 列印時不翻轉，只顯示正面 */
+            }
+            .flashcard-back {
+                display: flex; /* 確保背面內容顯示 */
+                justify-content: center;
+                align-items: center;
+                color: #c2410c; /* 深橘色文字 */
+                background-color: #ffe0b2; /* 淺橘色 */
+            }
+            .flashcard-front {
+                display: none; /* 列印時隱藏正面 */
+            }
+            .print-instructions {
+                display: none; /* 列印時隱藏說明 */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="w-full text-center mb-8 print-instructions">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">國小英檢單字字卡</h1>
+        <p class="text-lg text-gray-600">點擊字卡可以翻轉，查看中文翻譯。</p>
+        <p class="text-lg text-gray-600">點擊字卡時也會**播放英文單字的語音**。</p>
+        <p class="text-lg text-gray-600">若要儲存為 PDF，請按下 <kbd>Ctrl + P</kbd> (Windows/Linux) 或 <kbd>Cmd + P</kbd> (Mac) 開啟列印選單，然後選擇「儲存為 PDF」。</p>
+        <div style="display:none" class="mt-4 p-4 bg-blue-100 rounded-lg shadow-md">
+            <p class="text-blue-800 text-base mb-2">**從檔案載入單字：**</p>
+            <p class="text-blue-700 text-sm mb-2">請準備一個純文字檔案 (.txt)，每行包含一個英文單字和其對應的中文翻譯，中間用**空格**或**逗號**隔開。</p>
+            <p class="text-blue-700 text-sm mb-4">範例：<br>
+                `animal 動物`<br>
+                `cat,貓`</p>
+            <input type="file" id="vocabularyFileInput" accept=".txt" class="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100"/>
+        </div>
+    </div>
+
+    <div id="flashcardContainer" class="w-full flex flex-col items-center">
+        <!-- 字卡類別區塊將會在這裡生成 -->
+    </div>
+
+    <script>
+        // 初始單字列表 (內容已從 uploaded:enlishword.txt 檔案載入)
+        let vocabulary = [
+            { english: "animal", chinese: "動物" },
+            { english: "bear", chinese: "熊" },
+            { english: "bee", chinese: "蜜蜂" },
+            { english: "bird", chinese: "鳥" },
+            { english: "butterfly", chinese: "蝴蝶" },
+            { english: "cat", chinese: "貓" },
+            { english: "chicken", chinese: "雞" },
+            { english: "cow", chinese: "乳牛" },
+            { english: "dog", chinese: "狗" },
+            { english: "duck", chinese: "鴨子" },
+            { english: "elephant", chinese: "大象" },
+            { english: "fish", chinese: "魚" },
+            { english: "frog", chinese: "青蛙" },
+            { english: "hippo", chinese: "河馬" },
+            { english: "horse", chinese: "馬" },
+            { english: "koala", chinese: "無尾熊" },
+            { english: "lion", chinese: "獅子" },
+            { english: "mice", chinese: "老鼠 (複數)" },
+            { english: "monkey", chinese: "猴子" },
+            { english: "mouse", chinese: "老鼠" },
+            { english: "panda", chinese: "大貓熊" },
+            { english: "pet", chinese: "寵物" },
+            { english: "pig", chinese: "豬" },
+            { english: "rabbit", chinese: "兔子" },
+            { english: "sheep", chinese: "綿羊" },
+            { english: "snake", chinese: "蛇" },
+            { english: "spider", chinese: "蜘蛛" },
+            { english: "tiger", chinese: "老虎" },
+            { english: "turtle", chinese: "烏龜" },
+            { english: "whale", chinese: "鯨魚" },
+            { english: "zebra", chinese: "斑馬" },
+            { english: "bag", chinese: "袋子" },
+            { english: "cap", chinese: "棒球帽" },
+            { english: "clothes", chinese: "衣服" },
+            { english: "coat", chinese: "外套" },
+            { english: "dress", chinese: "洋裝" },
+            { english: "glasses", chinese: "眼鏡" },
+            { english: "hat", chinese: "帽子" },
+            { english: "jacket", chinese: "夾克、外套" },
+            { english: "pants", chinese: "長褲" },
+            { english: "pocket", chinese: "口袋" },
+            { english: "shirt", chinese: "襯衫" },
+            { english: "shoes", chinese: "鞋子" },
+            { english: "shorts", chinese: "短褲" },
+            { english: "skirt", chinese: "裙子" },
+            { english: "socks", chinese: "襪子" },
+            { english: "sweater", chinese: "毛衣" },
+            { english: "T-shirt", chinese: "T 恤" },
+            { english: "umbrella", chinese: "傘" },
+            { english: "wear", chinese: "穿、戴" },
+            { english: "black", chinese: "黑色的" },
+            { english: "blue", chinese: "藍色的" },
+            { english: "brown", chinese: "咖啡色的" },
+            { english: "color", chinese: "顏色" },
+            { english: "gray", chinese: "灰色的" },
+            { english: "green", chinese: "綠色的" },
+            { english: "orange", chinese: "橘色的" },
+            { english: "pink", chinese: "粉紅色的" },
+            { english: "purple", chinese: "紫色的" },
+            { english: "red", chinese: "紅色的" },
+            { english: "white", chinese: "白色的" },
+            { english: "yellow", chinese: "黃色的" },
+            { english: "aunt", chinese: "阿姨、姑姑、伯母、舅媽" },
+            { english: "brother", chinese: "哥哥、弟弟" },
+            { english: "cousin", chinese: "堂兄（弟、姊、妹）" },
+            { english: "dad", chinese: "爸爸 (= father; daddy)" },
+            { english: "daddy", chinese: "爸爸 (= father; dad)" },
+            { english: "daughter", chinese: "女兒" },
+            { english: "family", chinese: "家庭、家人" },
+            { english: "father", chinese: "爸爸 (= dad; daddy)" },
+            { english: "grandfather", chinese: "外公、爺爺 (= grandpa)" },
+            { english: "grandma", chinese: "外婆、奶奶 (= grandmother)" },
+            { english: "grandmother", chinese: "外婆、奶奶 (= grandma)" },
+            { english: "grandpa", chinese: "外公、爺爺 (= grandfather)" },
+            { english: "grow", chinese: "成長、長大" },
+            { english: "live", chinese: "住" },
+            { english: "mom", chinese: "媽媽 (= mother; mommy)" },
+            { english: "mommy", chinese: "媽媽 (= mother; mom)" },
+            { english: "mother", chinese: "媽媽 (= mom; mommy)" },
+            { english: "parent", chinese: "父母親" },
+            { english: "sister", chinese: "姐姐、妹妹" },
+            { english: "son", chinese: "兒子" },
+            { english: "uncle", chinese: "叔叔、舅舅、姑丈、姨丈" },
+            { english: "apple", chinese: "蘋果" },
+            { english: "banana", chinese: "香蕉" },
+            { english: "beef", chinese: "牛肉" },
+            { english: "bread", chinese: "麵包" },
+            { english: "breakfast", chinese: "早餐" },
+            { english: "cake", chinese: "蛋糕" },
+            { english: "candy", chinese: "糖果" },
+            { english: "chicken", chinese: "雞肉" },
+            { english: "chocolate", chinese: "巧克力" },
+            { english: "coffee", chinese: "咖啡" },
+            { english: "coke", chinese: "可樂" },
+            { english: "cook", chinese: "做飯" },
+            { english: "cookies", chinese: "餅乾" },
+            { english: "dinner", chinese: "晚餐" },
+            { english: "drink", chinese: "喝" },
+            { english: "duck", chinese: "鴨肉" },
+            { english: "dumpling", chinese: "水餃" },
+            { english: "eat", chinese: "吃" },
+            { english: "egg", chinese: "蛋" },
+            { english: "fish", chinese: "魚肉" },
+            { english: "food", chinese: "食物" },
+            { english: "French fries", chinese: "薯條" },
+            { english: "fruit", chinese: "水果" },
+            { english: "full", chinese: "飽的" },
+            { english: "grape", chinese: "葡萄" },
+            { english: "hamburger", chinese: "漢堡" },
+            { english: "hungry", chinese: "餓的" },
+            { english: "ice cream", chinese: "冰淇淋" },
+            { english: "juice", chinese: "果汁" },
+            { english: "lemon", chinese: "檸檬" },
+            { english: "lunch", chinese: "午餐" },
+            { english: "meal", chinese: "餐" },
+            { english: "milk", chinese: "牛奶" },
+            { english: "noodles", chinese: "麵" },
+            { english: "orange", chinese: "橘子" },
+            { english: "peach", chinese: "桃子" },
+            { english: "pie", chinese: "派" },
+            { english: "pizza", chinese: "披薩" },
+            { english: "pork", chinese: "豬肉" },
+            { english: "pumpkin", chinese: "南瓜" },
+            { english: "rice", chinese: "米飯" },
+            { english: "salad", chinese: "沙拉" },
+            { english: "sandwich", chinese: "三明治" },
+            { english: "soup", chinese: "湯" },
+            { english: "strawberry", chinese: "草莓" },
+            { english: "sweet", chinese: "甜的" },
+            { english: "taste", chinese: "嚐起來" },
+            { english: "tea", chinese: "茶" },
+            { english: "thirsty", chinese: "口渴的" },
+            { english: "water", chinese: "水" },
+            { english: "watermelon", chinese: "西瓜" },
+            { english: "yummy", chinese: "好吃的、美味的" },
+            { english: "Miss", chinese: "小姐" },
+            { english: "Mr.", chinese: "先生" },
+            { english: "Mrs.", chinese: "太太" },
+            { english: "name", chinese: "名字" },
+            { english: "beach", chinese: "海灘" },
+            { english: "lake", chinese: "湖" },
+            { english: "mountain", chinese: "山" },
+            { english: "river", chinese: "河流" },
+            { english: "sea", chinese: "大海" },
+            { english: "Christmas", chinese: "聖誕節" },
+            { english: "Dragon Boat Festival", chinese: "端午節" },
+            { english: "Easter", chinese: "復活節" },
+            { english: "Halloween", chinese: "萬聖節" },
+            { english: "Moon Festival", chinese: "中秋節" },
+            { english: "cold", chinese: "感冒" },
+            { english: "headache", chinese: "頭痛" },
+            { english: "sick", chinese: "生病的" },
+            { english: "strong", chinese: "強壯的" },
+            { english: "tired", chinese: "疲累的" },
+            { english: "toothache", chinese: "牙痛" },
+            { english: "well", chinese: "好的, 健康地" },
+            { english: "bathroom", chinese: "浴室" },
+            { english: "bed", chinese: "床" },
+            { english: "bedroom", chinese: "臥房" },
+            { english: "chair", chinese: "椅子" },
+            { english: "clean", chinese: "乾淨的" },
+            { english: "clean", chinese: "清理" },
+            { english: "computer", chinese: "電腦" },
+            { english: "desk", chinese: "桌子" },
+            { english: "dining room", chinese: "(家裡的)餐廳" },
+            { english: "door", chinese: "門" },
+            { english: "fan", chinese: "電扇" },
+            { english: "floor", chinese: "地板" },
+            { english: "fridge", chinese: "電冰箱 (= refrigerator)" },
+            { english: "garden", chinese: "院子、花園" },
+            { english: "home", chinese: "家庭" },
+            { english: "house", chinese: "房子" },
+            { english: "key", chinese: "鑰匙" },
+            { english: "kitchen", chinese: "廚房" },
+            { english: "lamp", chinese: "燈" },
+            { english: "living room", chinese: "客廳" },
+            { english: "mop", chinese: "用拖把拖地" },
+            { english: "refrigerator", chinese: "電冰箱 (= fridge)" },
+            { english: "shelf", chinese: "架子" },
+            { english: "shower", chinese: "淋浴" },
+            { english: "sofa", chinese: "沙發" },
+            { english: "street", chinese: "街道" },
+            { english: "sweep", chinese: "掃" },
+            { english: "table", chinese: "桌子" },
+            { english: "telephone", chinese: "電話" },
+            { english: "television", chinese: "電視 (= TV)" },
+            { english: "towel", chinese: "毛巾" },
+            { english: "TV", chinese: "電視 (= television)" },
+            { english: "wall", chinese: "牆壁" },
+            { english: "wash", chinese: "洗" },
+            { english: "window", chinese: "窗戶" },
+            { english: "buy", chinese: "買" },
+            { english: "dollar", chinese: "元" },
+            { english: "free", chinese: "免費的" },
+            { english: "money", chinese: "錢" },
+            { english: "all", chinese: "全部的" },
+            { english: "both", chinese: "兩個都" },
+            { english: "eight", chinese: "八" },
+            { english: "eighteen", chinese: "十八" },
+            { english: "eighty", chinese: "八十" },
+            { english: "eleven", chinese: "十一" },
+            { english: "fifteen", chinese: "十五" },
+            { english: "fifty", chinese: "五十" },
+            { english: "first", chinese: "第一" },
+            { english: "five", chinese: "五" },
+            { english: "forty", chinese: "四十" },
+            { english: "four", chinese: "四" },
+            { english: "fourteen", chinese: "十四" },
+            { english: "hundred", chinese: "一百" },
+            { english: "last", chinese: "最後的" },
+            { english: "many", chinese: "許多(例如many flowers)" },
+            { english: "more", chinese: "更多、較多" },
+            { english: "much", chinese: "許多(例如much water)" },
+            { english: "nine", chinese: "九" },
+            { english: "nineteen", chinese: "十九" },
+            { english: "ninety", chinese: "九十" },
+            { english: "actor", chinese: "男演員" },
+            { english: "actress", chinese: "女演員" },
+            { english: "cook", chinese: "廚師" },
+            { english: "doctor", chinese: "醫生" },
+            { english: "driver", chinese: "司機、駕駛員" },
+            { english: "farmer", chinese: "農夫" },
+            { english: "job", chinese: "工作、職業" },
+            { english: "mailman", chinese: "郵差" },
+            { english: "nurse", chinese: "護士" },
+            { english: "police officer", chinese: "警察" },
+            { english: "singer", chinese: "歌手" },
+            { english: "soldier", chinese: "軍人" },
+            { english: "waiter", chinese: "男服務生" },
+            { english: "waitress", chinese: "女服務生" },
+            { english: "work", chinese: "工作" },
+            { english: "worker", chinese: "工作者" },
+            { english: "arm", chinese: "手臂" },
+            { english: "back", chinese: "背" },
+            { english: "ear", chinese: "耳朵" },
+            { english: "eye", chinese: "眼睛" },
+            { english: "face", chinese: "臉" },
+            { english: "feet", chinese: "腳 (複數)" },
+            { english: "foot", chinese: "腳" },
+            { english: "hair", chinese: "頭髮" },
+            { english: "hand", chinese: "手" },
+            { english: "head", chinese: "頭" },
+            { english: "leg", chinese: "腿" },
+            { english: "mouth", chinese: "嘴巴" },
+            { english: "nose", chinese: "鼻子" },
+            { english: "teeth", chinese: "牙齒 (複數)" },
+            { english: "tooth", chinese: "牙齒" },
+            { english: "baby", chinese: "嬰兒" },
+            { english: "boy", chinese: "男孩" },
+            { english: "girl", chinese: "女孩" },
+            { english: "kid", chinese: "小孩" },
+            { english: "man", chinese: "男人" },
+            { english: "men", chinese: "男人 (複數)" },
+            { english: "people", chinese: "人 (複數)" },
+            { english: "person", chinese: "人" },
+            { english: "woman", chinese: "女人" },
+            { english: "women", chinese: "女人 (複數)" },
+            { english: "angry", chinese: "生氣的" },
+            { english: "bad", chinese: "不好的、壞的" },
+            { english: "beautiful", chinese: "美麗的、漂亮的" },
+            { english: "bored", chinese: "覺得無聊的" },
+            { english: "boring", chinese: "令人無聊的" },
+            { english: "busy", chinese: "忙碌的" },
+            { english: "cute", chinese: "可愛的" },
+            { english: "excited", chinese: "覺得興奮的" },
+            { english: "exciting", chinese: "令人興奮的" },
+            { english: "good", chinese: "好的" },
+            { english: "happy", chinese: "開心的、高興的" },
+            { english: "heavy", chinese: "重的 (人)" },
+            { english: "lazy", chinese: "懶惰的" },
+            { english: "mad", chinese: "生氣的、氣憤的" },
+            { english: "nice", chinese: "令人愉快的、宜人的" },
+            { english: "old", chinese: "1. 年紀、年齡；2. 老的" },
+            { english: "pretty", chinese: "漂亮的" },
+            { english: "sad", chinese: "傷心的、難過的" },
+            { english: "short", chinese: "矮的" },
+            { english: "smart", chinese: "聰明的" },
+            { english: "tall", chinese: "高的" },
+            { english: "thin", chinese: "瘦的" },
+            { english: "young", chinese: "年輕的" },
+            { english: "back", chinese: "向後、回原處" },
+            { english: "bank", chinese: "銀行" },
+            { english: "bookstore", chinese: "書店" },
+            { english: "department store", chinese: "百貨公司" },
+            { english: "fire station", chinese: "消防站" },
+            { english: "here", chinese: "這裡" },
+            { english: "hospital", chinese: "醫院" },
+            { english: "Japan", chinese: "日本" },
+            { english: "left", chinese: "左邊(的)" },
+            { english: "market", chinese: "市場" },
+            { english: "movie theater", chinese: "電影院" },
+            { english: "museum", chinese: "博物館" },
+            { english: "office", chinese: "辦公室" },
+            { english: "park", chinese: "公園" },
+            { english: "police station", chinese: "警察局" },
+            { english: "post office", chinese: "郵局" },
+            { english: "restaurant", chinese: "餐廳" },
+            { english: "restroom", chinese: "洗手間、廁所" },
+            { english: "right", chinese: "右邊" },
+            { english: "shop", chinese: "商店 (UK; 英式英語)" },
+            { english: "store", chinese: "商店 (US; 美式英語)" },
+            { english: "supermarket", chinese: "超級市場" },
+            { english: "Taiwan", chinese: "臺灣" },
+            { english: "there", chinese: "那裡" },
+            { english: "UK", chinese: "英國" },
+            { english: "USA", chinese: "美國" },
+            { english: "zoo", chinese: "動物園" },
+            { english: "answer", chinese: "回答" },
+            { english: "art", chinese: "美術、藝術" },
+            { english: "ask", chinese: "問" },
+            { english: "blackboard", chinese: "黑板" },
+            { english: "book", chinese: "書、書本" },
+            { english: "Chinese", chinese: "中文" },
+            { english: "class", chinese: "課；班級" },
+            { english: "classroom", chinese: "教室" },
+            { english: "draw", chinese: "畫、描畫" },
+            { english: "English", chinese: "英文" },
+            { english: "eraser", chinese: "橡皮擦" },
+            { english: "friend", chinese: "朋友" },
+            { english: "glue", chinese: "膠水" },
+            { english: "homework", chinese: "回家作業" },
+            { english: "library", chinese: "圖書館" },
+            { english: "listen", chinese: "聽" },
+            { english: "marker", chinese: "麥克筆" },
+            { english: "math", chinese: "數學" },
+            { english: "music", chinese: "音樂" },
+            { english: "paper", chinese: "紙張" },
+            { english: "PE", chinese: "體育（課）" },
+            { english: "pen", chinese: "筆、鋼筆" },
+            { english: "pencil", chinese: "鉛筆" },
+            { english: "picture", chinese: "圖片、照片" },
+            { english: "question", chinese: "問題" },
+            { english: "read", chinese: "閱讀" },
+            { english: "ruler", chinese: "尺" },
+            { english: "say", chinese: "說" },
+            { english: "school", chinese: "學校" },
+            { english: "science", chinese: "科學" },
+            { english: "speak", chinese: "說" },
+            { english: "spell", chinese: "拼寫、用字母拼" },
+            { english: "story", chinese: "故事" },
+            { english: "student", chinese: "學生" },
+            { english: "study", chinese: "學習" },
+            { english: "talk", chinese: "說話、談話" },
+            { english: "teacher", chinese: "老師" },
+            { english: "test", chinese: "考試" },
+            { english: "vacation", chinese: "假期" },
+            { english: "write", chinese: "寫" },
+            { english: "big", chinese: "大的" },
+            { english: "heavy", chinese: "重的 (物品)" },
+            { english: "high", chinese: "高的" },
+            { english: "light", chinese: "輕的" },
+            { english: "long", chinese: "長的" },
+            { english: "pair", chinese: "一雙、一對" },
+            { english: "short", chinese: "短的" },
+            { english: "small", chinese: "小的" },
+            { english: "ball", chinese: "球" },
+            { english: "baseball", chinese: "棒球" },
+            { english: "basketball", chinese: "籃球" },
+            { english: "card", chinese: "卡片" },
+            { english: "climb", chinese: "爬、攀爬" },
+            { english: "dance", chinese: "跳舞" },
+            { english: "doll", chinese: "玩偶" },
+            { english: "drum", chinese: "鼓" },
+            { english: "fish", chinese: "釣魚" },
+            { english: "football", chinese: "足球 (UK; 英式英語)" },
+            { english: "game", chinese: "遊戲、比賽" },
+            { english: "hike", chinese: "健行" },
+            { english: "kite", chinese: "風箏" },
+            { english: "movie", chinese: "電影" },
+            { english: "paint", chinese: "用顏料畫、刷油漆" },
+            { english: "piano", chinese: "鋼琴" },
+            { english: "play", chinese: "玩" },
+            { english: "run", chinese: "跑、跑步" },
+            { english: "sing", chinese: "唱歌" },
+            { english: "soccer", chinese: "足球 (US; 美式英語)" },
+            { english: "song", chinese: "歌曲" },
+            { english: "sport", chinese: "運動" },
+            { english: "swim", chinese: "游泳" },
+            { english: "toy", chinese: "玩具" },
+            { english: "trip", chinese: "（短程的）旅行" },
+            { english: "win", chinese: "贏" },
+            { english: "yo-yo", chinese: "溜溜球" },
+            { english: "chopsticks", chinese: "筷子" },
+            { english: "cup", chinese: "杯子" },
+            { english: "dish", chinese: "碟子、盤子" },
+            { english: "fork", chinese: "叉子" },
+            { english: "glass", chinese: "玻璃杯" },
+            { english: "knife", chinese: "刀子" },
+            { english: "spoon", chinese: "湯匙" },
+            { english: "afternoon", chinese: "下午" },
+            { english: "April", chinese: "四月" },
+            { english: "August", chinese: "八月" },
+            { english: "clock", chinese: "時鐘" },
+            { english: "day", chinese: "天" },
+            { english: "December", chinese: "十二月" },
+            { english: "early", chinese: "早到（的）" },
+            { english: "evening", chinese: "傍晚" },
+            { english: "fall", chinese: "秋天" },
+            { english: "February", chinese: "二月" },
+            { english: "Friday", chinese: "星期五" },
+            { english: "January", chinese: "一月" },
+            { english: "July", chinese: "七月" },
+            { english: "June", chinese: "六月" },
+            { english: "late", chinese: "晚到（的）" },
+            { english: "March", chinese: "三月" },
+            { english: "May", chinese: "五月" },
+            { english: "Monday", chinese: "星期一" },
+            { english: "month", chinese: "月" },
+            { english: "morning", chinese: "早上" },
+            { english: "night", chinese: "晚上" },
+            { english: "November", chinese: "十一月" },
+            { english: "now", chinese: "現在" },
+            { english: "o'clock", chinese: "...點鐘" },
+            { english: "October", chinese: "十月" },
+            { english: "Saturday", chinese: "星期六" },
+            { english: "season", chinese: "季節" },
+            { english: "September", chinese: "九月" },
+            { english: "spring", chinese: "春天" },
+            { english: "summer", chinese: "夏天" },
+            { english: "Sunday", chinese: "星期日" },
+            { english: "Thursday", chinese: "星期四" },
+            { english: "time", chinese: "時間" },
+            { english: "today", chinese: "今天" },
+            { english: "tomorrow", chinese: "明天" },
+            { english: "Tuesday", chinese: "星期二" },
+            { english: "watch", chinese: "手錶" },
+            { english: "Wednesday", chinese: "星期三" },
+            { english: "week", chinese: "星期" },
+            { english: "winter", chinese: "冬天" },
+            { english: "year", chinese: "年" },
+            { english: "yesterday", chinese: "昨天" },
+            { english: "airplane", chinese: "飛機 (= plane)" },
+            { english: "airport", chinese: "機場" },
+            { english: "bicycle", chinese: "腳踏車 (= bike)" },
+            { english: "bike", chinese: "腳踏車 (= bicycle)" },
+            { english: "boat", chinese: "船" },
+            { english: "bus", chinese: "公車" },
+            { english: "bus stop", chinese: "公車站" },
+            { english: "car", chinese: "車子" },
+            { english: "drive", chinese: "開車" },
+            { english: "fast", chinese: "快速的（地）" },
+            { english: "fly", chinese: "飛、飛行" },
+            { english: "motorcycle", chinese: "摩托車" },
+            { english: "MRT", chinese: "捷運" },
+            { english: "plane", chinese: "飛機 (= airplane)" },
+            { english: "ride", chinese: "騎（機車、腳踏車等）" },
+            { english: "scooter", chinese: "輕型機車" },
+            { english: "ship", chinese: "（大）船" },
+            { english: "slow", chinese: "慢的" },
+            { english: "station", chinese: "車站" },
+            { english: "taxi", chinese: "計程車" },
+            { english: "train", chinese: "火車" },
+            { english: "truck", chinese: "卡車" },
+            { english: "turn", chinese: "轉彎" },
+            { english: "cloudy", chinese: "多雲的" },
+            { english: "cold", chinese: "寒冷的" },
+            { english: "cool", chinese: "涼爽的" },
+            { english: "hot", chinese: "熱的" },
+            { english: "moon", chinese: "月亮" },
+            { english: "rain", chinese: "下雨" },
+            { english: "rain", chinese: "雨水" },
+            { english: "rainbow", chinese: "彩虹" },
+            { english: "rainy", chinese: "下雨的/多雨的" },
+            { english: "sky", chinese: "天空" },
+            { english: "snow", chinese: "下雪" },
+            { english: "snow", chinese: "雪" },
+            { english: "star", chinese: "星星" },
+            { english: "sun", chinese: "太陽" },
+            { english: "sunny", chinese: "晴朗的、出太陽的" },
+            { english: "typhoon", chinese: "颱風" },
+            { english: "warm", chinese: "溫暖的" },
+            { english: "weather", chinese: "天氣" },
+            { english: "wet", chinese: "潮濕的" },
+            { english: "wind", chinese: "風" },
+            { english: "windy", chinese: "風大的" },
+            { english: "a", chinese: "一個 冠詞" },
+            { english: "an", chinese: "一個 冠詞" },
+            { english: "every", chinese: "每一個" },
+            { english: "her", chinese: "她的" },
+            { english: "his", chinese: "他的" },
+            { english: "its", chinese: "它的、牠的" },
+            { english: "my", chinese: "我的" },
+            { english: "our", chinese: "我們的" },
+            { english: "that", chinese: "那個" },
+            { english: "the", chinese: "這 冠詞" },
+            { english: "their", chinese: "他們的" },
+            { english: "these", chinese: "這些" },
+            { english: "this", chinese: "這個" },
+            { english: "those", chinese: "那些" },
+            { english: "your", chinese: "你的、你們的" },
+            { english: "he", chinese: "他" },
+            { english: "her", chinese: "她" },
+            { english: "him", chinese: "他(受詞)" },
+            { english: "I", chinese: "我" },
+            { english: "it", chinese: "它、牠" },
+            { english: "me", chinese: "我(受詞)" },
+            { english: "nothing", chinese: "什麼都沒有" },
+            { english: "she", chinese: "她" },
+            { english: "them", chinese: "他們(受詞)" },
+            { english: "they", chinese: "他們" },
+            { english: "us", chinese: "我們(受詞)" },
+            { english: "we", chinese: "我們" },
+            { english: "you", chinese: "你；你們" },
+            { english: "be", chinese: "是 (is, am, are) 助" },
+            { english: "can", chinese: "可以 助" },
+            { english: "do", chinese: "助 助" },
+            { english: "have", chinese: "助 助" },
+            { english: "will", chinese: "將會 助" },
+            { english: "and", chinese: "和" },
+            { english: "because", chinese: "因為" },
+            { english: "but", chinese: "但是" },
+            { english: "bye", chinese: "再見 (= goodbye)" },
+            { english: "excuse me", chinese: "不好意思、對不起" },
+            { english: "goodbye", chinese: "再見 (= bye)" },
+            { english: "hello", chinese: "哈囉" },
+            { english: "hi", chinese: "嗨" },
+            { english: "please", chinese: "請" },
+            { english: "birthday", chinese: "生日" },
+            { english: "bottle", chinese: "瓶子" },
+            { english: "box", chinese: "箱子" },
+            { english: "can", chinese: "罐子" },
+            { english: "cellphone", chinese: "手機" },
+            { english: "dream", chinese: "夢" },
+            { english: "email", chinese: "電子郵件" },
+            { english: "flower", chinese: "花" },
+            { english: "fun", chinese: "樂趣" },
+            { english: "gift", chinese: "禮物" },
+            { english: "mail", chinese: "信" },
+            { english: "party", chinese: "派對" },
+            { english: "photo", chinese: "照片" },
+            { english: "robot", chinese: "機器人" },
+            { english: "sale", chinese: "拍賣、特價" },
+            { english: "thing", chinese: "東西、物" },
+            { english: "ticket", chinese: "票" },
+            { english: "trash", chinese: "垃圾" },
+            { english: "tree", chinese: "樹" },
+            { english: "way", chinese: "路、方向" },
+            { english: "word", chinese: "字" },
+            { english: "bite", chinese: "咬" },
+            { english: "brush", chinese: "用刷子刷" },
+            { english: "call", chinese: "打電話給..." },
+            { english: "close", chinese: "關" },
+            { english: "come", chinese: "來" },
+            { english: "cry", chinese: "哭、哭泣" },
+            { english: "do", chinese: "做" },
+            { english: "enjoy", chinese: "享受、喜歡" },
+            { english: "fall", chinese: "掉落" },
+            { english: "feel", chinese: "感受、感覺" },
+            { english: "find", chinese: "找" },
+            { english: "get", chinese: "得到、收到" },
+            { english: "give", chinese: "給" },
+            { english: "go", chinese: "去、走" },
+            { english: "have", chinese: "有" },
+            { english: "help", chinese: "幫助" },
+            { english: "hit", chinese: "打、碰撞" },
+            { english: "hope", chinese: "希望" },
+            { english: "hurry", chinese: "趕快、急忙" },
+            { english: "hurt", chinese: "受傷" },
+            { english: "jump", chinese: "跳" },
+            { english: "know", chinese: "知道、認識" },
+            { english: "laugh", chinese: "笑" },
+            { english: "let's", chinese: "讓我們..." },
+            { english: "like", chinese: "喜歡" },
+            { english: "look", chinese: "看、看起來" },
+            { english: "love", chinese: "愛、喜愛" },
+            { english: "make", chinese: "做、製造" },
+            { english: "meet", chinese: "遇見、會面" },
+            { english: "miss", chinese: "想念" },
+            { english: "need", chinese: "需要" },
+            { english: "open", chinese: "開" },
+            { english: "pick up", chinese: "撿起、接（人）、接（電話）" },
+            { english: "put", chinese: "放" },
+            { english: "see", chinese: "看見" },
+            { english: "show", chinese: "給...看、展示" },
+            { english: "sit", chinese: "坐下" },
+            { english: "sleep", chinese: "睡覺" },
+            { english: "smell", chinese: "聞起來" },
+            { english: "stand", chinese: "站、站立" },
+            { english: "start", chinese: "開始" },
+            { english: "stop", chinese: "停下來" },
+            { english: "take", chinese: "攜帶、拿取" },
+            { english: "tell", chinese: "告訴、告知" },
+            { english: "thank", chinese: "感謝（某人）" },
+            { english: "touch", chinese: "觸碰" },
+            { english: "try", chinese: "嘗試" },
+            { english: "wait", chinese: "等、等待" },
+            { english: "wake", chinese: "醒來、喚醒" },
+            { english: "walk", chinese: "走路" },
+            { english: "want", chinese: "想要" },
+            { english: "watch", chinese: "看" },
+            { english: "welcome", chinese: "歡迎" },
+            { english: "worry", chinese: "擔心" },
+            { english: "cool", chinese: "清涼的" },
+            { english: "different", chinese: "不一樣的" },
+            { english: "dirty", chinese: "髒的" },
+            { english: "easy", chinese: "簡單的" },
+            { english: "favorite", chinese: "最喜歡的" },
+            { english: "fine", chinese: "很好的、很不錯的" },
+            { english: "fun", chinese: "有趣的" },
+            { english: "great", chinese: "很棒的" },
+            { english: "hard", chinese: "困難的" },
+            { english: "hot", chinese: "燙的" },
+            { english: "interesting", chinese: "有趣的" },
+            { english: "new", chinese: "新的" },
+            { english: "OK", chinese: "好的" },
+            { english: "only", chinese: "僅有的" },
+            { english: "other", chinese: "其他的" },
+            { english: "quiet", chinese: "安靜的" },
+            { english: "ready", chinese: "準備好的" },
+            { english: "right", chinese: "對的" },
+            { english: "sorry", chinese: "感到抱歉的、對不起" },
+            { english: "sure", chinese: "確定的" },
+            { english: "wet", chinese: "濕的" },
+            { english: "wonderful", chinese: "很棒的、精彩的" },
+            { english: "again", chinese: "再一次、又一次" },
+            { english: "always", chinese: "總是、永遠" },
+            { english: "away", chinese: "離開" },
+            { english: "maybe", chinese: "也許" },
+            { english: "never", chinese: "不曾" },
+            { english: "no", chinese: "不" },
+            { english: "not", chinese: "不、沒有" },
+            { english: "OK", chinese: "沒事" },
+            { english: "only", chinese: "唯一地" },
+            { english: "really", chinese: "真正地" },
+            { english: "so", chinese: "所以" },
+            { english: "sometimes", chinese: "有時候" },
+            { english: "still", chinese: "仍然" },
+            { english: "sure", chinese: "當然" },
+            { english: "then", chinese: "然後、接著" },
+            { english: "together", chinese: "一起" },
+            { english: "too", chinese: "1. 也；2. 太..." },
+            { english: "usually", chinese: "通常" },
+            { english: "very", chinese: "非常" },
+            { english: "yes", chinese: "是" }
+        ];
+
+        const flashcardContainer = document.getElementById('flashcardContainer');
+        const vocabularyFileInput = document.getElementById('vocabularyFileInput');
+
+        // 檢查瀏覽器是否支援語音合成
+        if ('speechSynthesis' in window) {
+            console.log('Web Speech API 支援語音合成。');
+        } else {
+            console.warn('您的瀏覽器不支援 Web Speech API 語音合成功能。');
+        }
+
+        /**
+         * 根據單字的中文翻譯或英文單字本身判斷其類別
+         * @param {object} word - 包含 english 和 chinese 屬性的單字物件
+         * @returns {string} 單字所屬的類別名稱
+         */
+        function getCategory(word) {
+            const chinese = word.chinese;
+            const english = word.english.toLowerCase(); // 將英文單字轉為小寫以便匹配
+
+            // 定義用於分類的關鍵字列表
+            const categories = {
+                "動物/昆蟲": ["動物", "熊", "蜜蜂", "鳥", "蝴蝶", "貓", "雞", "牛", "狗", "鴨子", "大象", "魚", "青蛙", "河馬", "馬", "無尾熊", "獅子", "老鼠", "猴子", "熊貓", "寵物", "豬", "兔子", "綿羊", "蛇", "蜘蛛", "老虎", "烏龜", "鯨魚", "斑馬"],
+                "衣物/配件": ["衣服", "外套", "洋裝", "眼鏡", "帽子", "夾克", "長褲", "口袋", "襯衫", "鞋子", "短褲", "裙子", "襪子", "毛衣", "T恤", "傘", "wear"], // Added 'wear' as it's related to clothes
+                "顏色": ["黑色", "藍色", "咖啡色", "灰色", "綠色", "橘色", "粉紅色", "紫色", "紅色", "白色", "黃色", "color"],
+                "家庭成員": ["阿姨", "姑姑", "伯母", "舅媽", "哥哥", "弟弟", "堂兄", "堂弟", "堂姊", "堂妹", "爸爸", "女兒", "家庭", "家人", "母親", "祖父", "祖母", "外公", "外婆", "兒子", "姐姐", "妹妹", "叔叔", "舅舅", "姑丈", "姨丈", "父母親", "family", "parent"],
+                "食物/飲料": ["蘋果", "香蕉", "牛肉", "麵包", "早餐", "蛋糕", "糖果", "雞肉", "巧克力", "咖啡", "可樂", "餅乾", "晚餐", "鴨肉", "水餃", "蛋", "魚肉", "食物", "薯條", "水果", "葡萄", "漢堡", "冰淇淋", "果汁", "檸檬", "午餐", "餐", "牛奶", "麵", "橘子", "桃子", "派", "披薩", "豬肉", "南瓜", "米飯", "沙拉", "三明治", "湯", "草莓", "茶", "水", "西瓜", "hungry", "thirsty", "sweet", "yummy", "full", "eat", "drink", "taste"], // Added related words
+                "稱謂/人": ["小姐", "先生", "太太", "嬰兒", "男孩", "女孩", "小孩", "男人", "女人", "人", "baby", "boy", "girl", "kid", "man", "woman", "people", "person"],
+                "地點/自然景觀": ["海灘", "湖", "山", "河流", "大海", "銀行", "書店", "百貨公司", "消防站", "醫院", "日本", "市場", "電影院", "博物館", "辦公室", "公園", "警察局", "郵局", "餐廳", "洗手間", "商店", "超級市場", "臺灣", "英國", "美國", "動物園", "街道", "beach", "lake", "mountain", "river", "sea", "bank", "store", "market", "hospital", "park", "zoo", "street"],
+                "節日": ["聖誕節", "端午節", "復活節", "萬聖節", "中秋節", "Christmas", "Easter", "Halloween"],
+                "健康/身體部位": ["感冒", "頭痛", "生病", "強壯", "疲累", "牙痛", "手臂", "背", "耳朵", "眼睛", "臉", "腳", "頭髮", "手", "頭", "腿", "嘴巴", "鼻子", "牙齒", "cold", "sick", "tired", "arm", "back", "ear", "eye", "face", "foot", "hand", "head", "leg", "mouth", "nose", "tooth", "well", "hurt"], // Consolidated body and health
+                "居家/場所物品": ["浴室", "床", "臥房", "椅子", "電腦", "桌子", "餐廳", "門", "電扇", "地板", "電冰箱", "院子", "花園", "家", "房子", "鑰匙", "廚房", "燈", "客廳", "架子", "淋浴", "沙發", "牆壁", "窗戶", "bathroom", "bed", "bedroom", "chair", "computer", "desk", "door", "fan", "floor", "fridge", "garden", "home", "house", "key", "kitchen", "lamp", "living room", "refrigerator", "shelf", "shower", "sofa", "wall", "window"],
+                "動作/動詞": ["穿", "咬", "刷", "打電話", "關", "來", "哭", "做", "享受", "掉落", "感受", "感覺", "找", "得到", "收到", "給", "去", "走", "有", "幫助", "打", "碰撞", "希望", "趕快", "急忙", "受傷", "跳", "知道", "認識", "笑", "讓我們", "喜歡", "看", "看起來", "愛", "喜愛", "製造", "遇見", "會面", "想念", "需要", "開", "撿起", "接", "放", "看見", "展示", "坐下", "睡覺", "聞起來", "站立", "開始", "停下來", "攜帶", "拿取", "告訴", "感謝", "觸碰", "嘗試", "等", "等待", "醒來", "喚醒", "走路", "想要", "歡迎", "擔心", "回答", "問", "畫", "描畫", "聽", "閱讀", "說", "拼寫", "學習", "談話", "寫", "釣魚", "健行", "畫", "刷油漆", "玩", "跑", "唱歌", "游泳", "贏", "開車", "飛", "騎", "轉彎", "清理", "拖地", "掃", "洗", "cook", "do", "enjoy", "fall", "feel", "find", "get", "give", "go", "have", "help", "hit", "hope", "hurry", "hurt", "jump", "know", "laugh", "let's", "like", "look", "love", "make", "meet", "miss", "need", "open", "put", "see", "show", "sit", "sleep", "smell", "stand", "start", "stop", "take", "tell", "thank", "touch", "try", "wait", "wake", "walk", "want", "watch", "welcome", "worry", "clean", "mop", "sweep", "wash", "drive", "fly", "ride", "turn"],
+                "金錢/購物": ["元", "錢", "免費", "買", "dollar", "money", "free", "buy", "sale"],
+                "數字": ["八", "十八", "八十", "十一", "十五", "五十", "第一", "五", "四十", "四", "十四", "一百", "九", "十九", "九十", "一", "二", "eight", "eleven", "fifteen", "fifty", "first", "five", "forty", "four", "fourteen", "hundred", "nine", "nineteen", "ninety", "one", "ten", "two", "third", "second"], // Added common numbers and ordinals
+                "職業": ["男演員", "女演員", "廚師", "醫生", "司機", "駕駛員", "農夫", "工作", "職業", "郵差", "護士", "警察", "歌手", "軍人", "男服務生", "女服務生", "工作者", "actor", "cook", "doctor", "driver", "farmer", "job", "mailman", "nurse", "police officer", "singer", "soldier", "waiter", "waitress", "worker"],
+                "情緒/形容詞": ["生氣", "不好", "壞", "美麗", "漂亮", "無聊", "忙碌", "可愛", "興奮", "好", "開心", "高興", "重", "懶惰", "愉快", "宜人", "老", "年輕", "傷心", "難過", "矮", "聰明", "高", "瘦", "清涼", "不一樣", "髒", "簡單", "最喜歡", "很好", "很不錯", "有趣", "新", "僅有", "其他", "安靜", "準備好", "對", "抱歉", "確定", "濕", "很棒", "精彩", "angry", "bad", "beautiful", "bored", "boring", "busy", "cute", "excited", "exciting", "good", "happy", "heavy", "lazy", "mad", "nice", "old", "pretty", "sad", "short", "smart", "tall", "thin", "young", "cool", "different", "dirty", "easy", "favorite", "fine", "fun", "great", "hard", "hot", "interesting", "new", "OK", "only", "other", "quiet", "ready", "right", "sorry", "sure", "wet", "wonderful"],
+                "地點/方向/副詞": ["向後", "回原處", "這裡", "左邊", "那裡", "右邊", "快速", "慢", "早到", "晚到", "現在", "點鐘", "再一次", "又一次", "總是", "永遠", "離開", "也許", "不曾", "不", "沒有", "沒事", "唯一地", "真正地", "所以", "有時候", "仍然", "當然", "然後", "接著", "一起", "也", "太", "通常", "非常", "是", "back", "here", "left", "right", "there", "fast", "slow", "early", "late", "now", "again", "always", "away", "maybe", "never", "not", "only", "really", "so", "sometimes", "still", "then", "together", "too", "usually", "very", "yes"],
+                "學校/學習用品": ["美術", "藝術", "黑板", "書", "書本", "中文", "課", "班級", "教室", "英文", "橡皮擦", "膠水", "回家作業", "圖書館", "麥克筆", "數學", "音樂", "紙張", "體育", "筆", "鋼筆", "鉛筆", "圖片", "照片", "問題", "尺", "學校", "科學", "故事", "學生", "學習", "談話", "老師", "考試", "假期", "art", "blackboard", "book", "Chinese", "class", "classroom", "draw", "English", "eraser", "glue", "homework", "library", "listen", "marker", "math", "music", "paper", "PE", "pen", "pencil", "picture", "question", "read", "ruler", "say", "school", "science", "speak", "spell", "story", "student", "study", "talk", "teacher", "test", "vacation", "write"],
+                "運動/興趣/嗜好": ["球", "棒球", "籃球", "卡片", "跳舞", "玩偶", "鼓", "足球", "遊戲", "風箏", "電影", "鋼琴", "歌曲", "運動", "玩具", "旅行", "溜溜球", "ball", "baseball", "basketball", "card", "climb", "dance", "doll", "drum", "fish", "football", "game", "hike", "kite", "movie", "paint", "piano", "play", "run", "sing", "soccer", "song", "sport", "swim", "toy", "trip", "win", "yo-yo"],
+                "餐具": ["筷子", "杯子", "碟子", "盤子", "叉子", "玻璃杯", "刀子", "湯匙", "chopsticks", "cup", "dish", "fork", "glass", "knife", "spoon"],
+                "時間": ["下午", "四月", "八月", "時鐘", "天", "十二月", "傍晚", "秋天", "二月", "星期五", "一月", "七月", "六月", "三月", "五月", "星期一", "月", "早上", "晚上", "十一月", "十月", "星期六", "季節", "九月", "春天", "夏天", "星期日", "星期四", "時間", "今天", "明天", "星期二", "手錶", "星期三", "星期", "冬天", "年", "昨天", "afternoon", "April", "August", "clock", "day", "December", "evening", "fall", "February", "Friday", "January", "July", "June", "March", "May", "Monday", "month", "morning", "night", "November", "October", "Saturday", "season", "September", "spring", "summer", "Sunday", "Thursday", "time", "today", "tomorrow", "Tuesday", "watch", "Wednesday", "week", "winter", "year", "yesterday"],
+                "交通工具": ["飛機", "機場", "腳踏車", "船", "公車", "公車站", "汽車", "火車", "卡車", "摩托車", "捷運", "輕型機車", "船", "計程車", "車站", "airplane", "airport", "bicycle", "bike", "boat", "bus", "car", "motorcycle", "MRT", "plane", "scooter", "ship", "taxi", "train", "truck", "station", "bus stop"],
+                "天氣": ["多雲", "寒冷", "涼爽", "熱", "月亮", "下雨", "雨水", "彩虹", "下雨的", "多雨的", "天空", "下雪", "雪", "星星", "太陽", "晴朗", "出太陽", "颱風", "溫暖", "天氣", "潮濕", "風", "風大", "cloudy", "cold", "cool", "hot", "moon", "rain", "rainbow", "rainy", "sky", "snow", "star", "sun", "sunny", "typhoon", "warm", "weather", "wet", "wind", "windy"],
+                "冠詞/限定詞": ["一個", "每一個", "她的", "他的", "它的", "我的", "我們的", "那個", "這", "他們的", "這些", "這個", "那些", "你的", "你們的", "a", "an", "every", "her", "his", "its", "my", "our", "that", "the", "their", "these", "this", "those", "your"],
+                "代名詞": ["他", "她", "他(受詞)", "我", "它", "牠", "我(受詞)", "什麼都沒有", "他們(受詞)", "他們", "我們(受詞)", "我們", "你", "你們", "he", "her", "him", "I", "it", "me", "nothing", "she", "them", "they", "us", "we", "you"],
+                "助動詞": ["是", "可以", "將會", "be", "can", "do", "have", "will"],
+                "連接詞": ["和", "因為", "但是", "and", "because", "but"],
+                "感嘆詞": ["再見", "不好意思", "對不起", "哈囉", "嗨", "請", "bye", "excuse me", "goodbye", "hello", "hi", "please", "OK"],
+                "其他名詞/物品": ["生日", "瓶子", "箱子", "罐子", "手機", "夢", "電子郵件", "花", "樂趣", "禮物", "信", "派對", "照片", "機器人", "拍賣", "特價", "東西", "物", "票", "垃圾", "樹", "路", "方向", "字", "birthday", "bottle", "box", "can", "cellphone", "dream", "email", "flower", "fun", "gift", "mail", "party", "photo", "robot", "sale", "thing", "ticket", "trash", "tree", "way", "word"]
+            };
+
+            // 優先匹配中文翻譯
+            for (const category in categories) {
+                for (const keyword of categories[category]) {
+                    if (chinese.includes(keyword)) {
+                        return category;
+                    }
+                }
+            }
+
+            // 如果中文沒有明確匹配，則嘗試匹配英文單字（小寫）
+            for (const category in categories) {
+                for (const keyword of categories[category]) {
+                    if (english === keyword.toLowerCase()) { // 精確匹配英文單字
+                        return category;
+                    }
+                }
+            }
+
+            // 最後根據詞性判斷，如果中文翻譯包含詞性標註
+            if (chinese.includes("名詞")) return "名詞";
+            if (chinese.includes("動詞")) return "動詞";
+            if (chinese.includes("形容詞")) return "形容詞";
+            if (chinese.includes("副詞")) return "副詞";
+            if (chinese.includes("助動詞")) return "助動詞";
+            if (chinese.includes("代名詞")) return "代名詞";
+            if (chinese.includes("連接詞")) return "連接詞";
+            if (chinese.includes("感嘆詞")) return "感嘆詞";
+            if (chinese.includes("限定詞")) return "限定詞";
+            if (chinese.includes("冠詞")) return "冠詞/限定詞";
+            if (chinese.includes("數字")) return "數字";
+
+
+            return "其他"; // 默認類別
+        }
+
+        /**
+         * 根據當前的 vocabulary 陣列生成字卡並分類顯示
+         */
+        function generateFlashcards() {
+            flashcardContainer.innerHTML = ''; // 清空現有的字卡
+
+            // 根據類別對單字進行分組
+            const categorizedWords = {};
+            vocabulary.forEach(word => {
+                const category = getCategory(word);
+                if (!categorizedWords[category]) {
+                    categorizedWords[category] = [];
+                }
+                categorizedWords[category].push(word);
+            });
+
+            // 渲染每個類別的字卡區塊
+            for (const categoryName in categorizedWords) {
+                const categorySection = document.createElement('div');
+                categorySection.classList.add('category-section');
+
+                const categoryTitle = document.createElement('h2');
+                categoryTitle.classList.add('category-title');
+                categoryTitle.textContent = categoryName;
+                categorySection.appendChild(categoryTitle);
+
+                const flashcardGrid = document.createElement('div');
+                flashcardGrid.classList.add('flashcard-grid');
+
+                categorizedWords[categoryName].forEach(word => {
+                    const flashcard = document.createElement('div');
+                    flashcard.classList.add('flashcard');
+
+                    const front = document.createElement('div');
+                    front.classList.add('flashcard-front', 'flashcard-inner');
+                    front.textContent = word.english;
+
+                    const back = document.createElement('div');
+                    back.classList.add('flashcard-back', 'flashcard-inner');
+                    back.textContent = word.chinese;
+
+                    flashcard.appendChild(front);
+                    flashcard.appendChild(back);
+                    flashcardGrid.appendChild(flashcard);
+
+                    // 添加點擊事件，翻轉字卡並播放語音
+                    flashcard.addEventListener('click', () => {
+                        flashcard.classList.toggle('flipped');
+
+                        // 播放英文單字的語音
+                        if ('speechSynthesis' in window) {
+                            const utterance = new SpeechSynthesisUtterance(word.english);
+                            utterance.lang = 'en-US'; // 設定語言為美式英文
+                            utterance.rate = 0.7; // 設定語音速度，0.7 表示比正常速度慢一些
+                            window.speechSynthesis.speak(utterance);
+                        }
+                    });
+                });
+                categorySection.appendChild(flashcardGrid);
+                flashcardContainer.appendChild(categorySection);
+            }
+        }
+
+        // 監聽檔案輸入的變化
+        vocabularyFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0]; // 取得選取的第一個檔案
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    const lines = content.split('\n'); // 按行分割內容
+                    const newVocabulary = [];
+
+                    lines.forEach(line => {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine) { // 確保行不為空
+                            // 嘗試用空格或逗號分割
+                            const parts = trimmedLine.split(/[\s,]+/);
+                            if (parts.length >= 2) {
+                                newVocabulary.push({
+                                    english: parts[0],
+                                    chinese: parts.slice(1).join(' ') // 處理中文翻譯可能有多個詞的情況
+                                });
+                            }
+                        }
+                    });
+
+                    if (newVocabulary.length > 0) {
+                        vocabulary = newVocabulary; // 更新 vocabulary 陣列
+                        generateFlashcards(); // 重新生成字卡
+                        console.log('單字已從檔案載入並更新。');
+                    } else {
+                        console.warn('檔案內容無效或沒有可解析的單字。');
+                        alert('檔案內容無效或沒有可解析的單字，請檢查檔案格式。');
+                    }
+                };
+
+                reader.onerror = (e) => {
+                    console.error('讀取檔案時發生錯誤:', e);
+                    alert('讀取檔案時發生錯誤，請重試。');
+                };
+
+                reader.readAsText(file); // 以文字格式讀取檔案
+            }
+        });
+
+        // 頁面載入時先生成一次字卡 (使用初始的 vocabulary 陣列)
+        generateFlashcards();
+    </script>
+</body>
+</html>

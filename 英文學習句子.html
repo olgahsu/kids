@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生活英文句子字卡</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 設定字體為 Inter，並確保中文字體顯示正常 */
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8; /* 淺灰色背景 */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px;
+            gap: 20px; /* 卡片間距 */
+        }
+
+        /* 字卡樣式 */
+        .flashcard {
+            width: 320px; /* 稍微加大寬度以容納句子 */
+            height: 200px; /* 稍微加大高度 */
+            perspective: 1000px; /* 3D 翻轉效果 */
+            cursor: pointer;
+            border-radius: 15px; /* 圓角 */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* 陰影 */
+            background-color: #ffffff; /* 卡片背景色 */
+            transition: transform 0.6s; /* 翻轉動畫 */
+            position: relative;
+            transform-style: preserve-3d; /* 保持 3D 效果 */
+        }
+
+        /* 翻轉效果 */
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* 字卡內容面 */
+        .flashcard-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden; /* 隱藏背面 */
+            border-radius: 15px;
+            padding: 15px;
+            box-sizing: border-box;
+            word-break: break-word; /* 長單字自動換行 */
+        }
+
+        /* 正面樣式 (英文句子) */
+        .flashcard-front {
+            background-color: #e0f2f7; /* 淺藍色 */
+            color: #2c5282; /* 深藍色文字 */
+            font-size: 1.6rem; /* 句子字體大小 */
+            line-height: 1.4; /* 行高 */
+        }
+
+        /* 背面樣式 (中文翻譯) */
+        .flashcard-back {
+            background-color: #ffe0b2; /* 淺橘色 */
+            color: #c2410c; /* 深橘色文字 */
+            transform: rotateY(180deg); /* 背面翻轉 180 度 */
+            font-size: 1.4rem; /* 中文翻譯字體大小 */
+            line-height: 1.4; /* 行高 */
+        }
+
+        /* 印刷樣式調整 */
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+                margin: 0;
+                display: block; /* 讓卡片在列印時可以自動換行 */
+            }
+            .flashcard {
+                page-break-inside: avoid; /* 避免卡片被切斷 */
+                margin: 10px; /* 列印時的間距 */
+                display: inline-block; /* 讓卡片並排顯示 */
+            }
+            .flashcard.flipped {
+                transform: rotateY(0deg); /* 列印時不翻轉，只顯示正面 */
+            }
+            .flashcard-back {
+                display: flex; /* 確保背面內容顯示 */
+                justify-content: center;
+                align-items: center;
+                color: #c2410c; /* 深橘色文字 */
+                background-color: #ffe0b2; /* 淺橘色 */
+            }
+            .flashcard-front {
+                display: none; /* 列印時隱藏正面 */
+            }
+            .print-instructions {
+                display: none; /* 列印時隱藏說明 */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="w-full text-center mb-8 print-instructions">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">生活英文句子字卡</h1>
+        <p class="text-lg text-gray-600">點擊字卡可以翻轉，查看中文翻譯。</p>
+        <p class="text-lg text-gray-600">點擊字卡時也會**播放英文句子的語音**。</p>
+        <p class="text-lg text-gray-600">若要儲存為 PDF，請按下 <kbd>Ctrl + P</kbd> (Windows/Linux) 或 <kbd>Cmd + P</kbd> (Mac) 開啟列印選單，然後選擇「儲存為 PDF」。</p>
+    </div>
+
+    <div id="flashcardContainer" class="flex flex-wrap justify-center items-start gap-20px">
+        <!-- 字卡將會在這裡生成 -->
+    </div>
+
+    <script>
+        // 英文句子列表
+        const sentences = [
+            // 第 1 組：動物與昆蟲 (Animals & Insects)
+            { english: "My dog loves to run in the park.", chinese: "我的狗喜歡在公園裡跑。" },
+            { english: "Look! A little bird is singing on the tree.", chinese: "看！一隻小鳥在樹上唱歌。" },
+            { english: "The cat is sleeping on the sofa.", chinese: "貓咪在沙發上睡覺。" },
+            { english: "An elephant is a very big animal.", chinese: "大象是一種非常大的動物。" },
+            { english: "I saw a butterfly flying in the garden.", chinese: "我看到一隻蝴蝶在花園裡飛。" },
+            { english: "The fish swims in the water.", chinese: "魚在水裡游泳。" },
+            { english: "A cow gives us milk.", chinese: "乳牛給我們牛奶。" },
+            { english: "Be careful, there's a spider on the wall!", chinese: "小心，牆上有一隻蜘蛛！" },
+            { english: "The monkey likes to eat bananas.", chinese: "猴子喜歡吃香蕉。" },
+            { english: "A bee makes honey.", chinese: "蜜蜂製造蜂蜜。" },
+
+            // 第 2 組：衣物與配件 (Clothes & Accessories)
+            { english: "I wear a blue T-shirt today.", chinese: "我今天穿一件藍色的 T 恤。" },
+            { english: "My shoes are red.", chinese: "我的鞋子是紅色的。" },
+            { english: "She has a new dress for the party.", chinese: "她有一件參加派對的新洋裝。" },
+            { english: "Don't forget your hat when it's sunny.", chinese: "天氣晴朗時別忘了戴帽子。" },
+            { english: "Put your money in your pocket.", chinese: "把你的錢放在口袋裡。" },
+            { english: "He is wearing a warm coat because it's cold.", chinese: "他穿著一件暖和的外套，因為天氣很冷。" },
+            { english: "My glasses help me see clearly.", chinese: "我的眼鏡幫助我看清楚。" },
+            { english: "I put my book in my bag.", chinese: "我把書放在我的袋子裡。" },
+            { english: "These shorts are very comfortable.", chinese: "這件短褲很舒服。" },
+            { english: "My sweater is yellow.", chinese: "我的毛衣是黃色的。" },
+
+            // 第 3 組：顏色 (Colors)
+            { english: "The sky is blue.", chinese: "天空是藍色的。" },
+            { english: "My favorite color is green.", chinese: "我最喜歡的顏色是綠色。" },
+            { english: "The apple is red.", chinese: "蘋果是紅色的。" },
+            { english: "The banana is yellow.", chinese: "香蕉是黃色的。" },
+            { english: "Look at the black cat!", chinese: "看那隻黑貓！" },
+            { english: "The orange is orange!", chinese: "橘子是橘色的！" },
+            { english: "My pencil is purple.", chinese: "我的鉛筆是紫色的。" },
+            { english: "The clouds are white and gray.", chinese: "雲是白色和灰色的。" },
+            { english: "Her hair is brown.", chinese: "她的頭髮是咖啡色的。" },
+            { english: "Do you like pink flowers?", chinese: "你喜歡粉紅色的花嗎？" },
+
+            // 第 4 組：家庭成員 (Family Members)
+            { english: "My family has five people: my dad, my mom, my brother, my grandpa, and me.", chinese: "我的家庭有五個人：我爸爸、我媽媽、我哥哥、我爺爺，還有我。" },
+            { english: "My grandpa loves to tell storys.", chinese: "我的爺爺喜歡講故事。" },
+            { english: "My sister and I play together.", chinese: "我的姐姐和我在一起玩。" },
+            { english: "My aunt will come to our home today.", chinese: "我的阿姨今天會來我們家。" },
+            { english: "The baby will grow big and strong.", chinese: "這個嬰兒會長大變得很強壯。" },
+            { english: "My uncle has a new car.", chinese: "我的叔叔有一輛新車。" },
+            { english: "My mother likes to cook dinner.", chinese: "我的媽媽喜歡做晚餐。" },
+            { english: "My father is a good teacher.", chinese: "我的爸爸是一位好老師。" },
+            { english: "I love my grandma very much.", chinese: "我非常愛我的外婆。" },
+            { english: "My cousin and I are friends.", chinese: "我的堂兄和我都是朋友。" }
+        ];
+
+        const flashcardContainer = document.getElementById('flashcardContainer');
+
+        // 檢查瀏覽器是否支援語音合成
+        if ('speechSynthesis' in window) {
+            console.log('Web Speech API 支援語音合成。');
+        } else {
+            console.warn('您的瀏覽器不支援 Web Speech API 語音合成功能。');
+        }
+
+        /**
+         * 根據句子陣列生成字卡
+         */
+        function generateSentenceFlashcards() {
+            flashcardContainer.innerHTML = ''; // 清空現有的字卡
+
+            sentences.forEach(sentence => {
+                const flashcard = document.createElement('div');
+                flashcard.classList.add('flashcard');
+
+                const front = document.createElement('div');
+                front.classList.add('flashcard-front', 'flashcard-inner');
+                front.textContent = sentence.english;
+
+                const back = document.createElement('div');
+                back.classList.add('flashcard-back', 'flashcard-inner');
+                back.textContent = sentence.chinese;
+
+                flashcard.appendChild(front);
+                flashcard.appendChild(back);
+                flashcardContainer.appendChild(flashcard);
+
+                // 添加點擊事件，翻轉字卡並播放語音
+                flashcard.addEventListener('click', () => {
+                    flashcard.classList.toggle('flipped');
+
+                    // 播放英文句子的語音
+                    if ('speechSynthesis' in window) {
+                        const utterance = new SpeechSynthesisUtterance(sentence.english);
+                        utterance.lang = 'en-US'; // 設定語言為美式英文
+                        utterance.rate = 0.7; // 設定語音速度，0.7 表示比正常速度慢一些
+                        window.speechSynthesis.speak(utterance);
+                    }
+                });
+            });
+        }
+
+        // 頁面載入時生成字卡
+        generateSentenceFlashcards();
+    </script>
+</body>
+</html>
