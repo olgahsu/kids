@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>國小英檢單字字卡</title>
+    <!-- 載入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 設定字體為 Inter，並確保中文字體顯示正常 */
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f0f4f8; /* 淺灰色背景 */
+            display: flex;
+            flex-direction: column; /* 讓內容垂直排列 */
+            align-items: center; /* 讓內容置中 */
+            padding: 20px;
+        }
+
+        /* 類別區塊樣式 */
+        .category-section {
+            width: 100%;
+            max-width: 1200px; /* 限制最大寬度 */
+            margin-bottom: 30px; /* 類別區塊間距 */
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+        }
+
+        .category-title {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #1a202c; /* 深灰色標題 */
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #cbd5e0; /* 底部邊框 */
+        }
+
+        /* 字卡容器樣式 */
+        .flashcard-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px; /* 卡片間距 */
+        }
+
+        /* 字卡樣式 */
+        .flashcard {
+            width: 280px; /* 固定寬度 */
+            height: 180px; /* 固定高度 */
+            perspective: 1000px; /* 3D 翻轉效果 */
+            cursor: pointer;
+            border-radius: 15px; /* 圓角 */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* 陰影 */
+            background-color: #ffffff; /* 卡片背景色 */
+            transition: transform 0.6s; /* 翻轉動畫 */
+            position: relative;
+            transform-style: preserve-3d; /* 保持 3D 效果 */
+        }
+
+        /* 翻轉效果 */
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* 字卡內容面 */
+        .flashcard-inner {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backface-visibility: hidden; /* 隱藏背面 */
+            border-radius: 15px;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+
+        /* 正面樣式 */
+        .flashcard-front {
+            background-color: #e0f2f7; /* 淺藍色 */
+            color: #2c5282; /* 深藍色文字 */
+            font-size: 2.2rem; /* 較大字體 */
+        }
+
+        /* 背面樣式 */
+        .flashcard-back {
+            background-color: #ffe0b2; /* 淺橘色 */
+            color: #c2410c; /* 深橘色文字 */
+            transform: rotateY(180deg); /* 背面翻轉 180 度 */
+            font-size: 1.8rem; /* 中文翻譯字體 */
+        }
+
+        /* 印刷樣式調整 */
+        @media print {
+            body {
+                background-color: #ffffff;
+                padding: 0;
+                margin: 0;
+                display: block; /* 讓卡片在列印時可以自動換行 */
+            }
+            .category-section {
+                page-break-before: always; /* 每個類別在新頁開始 */
+                box-shadow: none; /* 列印時移除陰影 */
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            .flashcard {
+                page-break-inside: avoid; /* 避免卡片被切斷 */
+                margin: 10px; /* 列印時的間距 */
+                display: inline-block; /* 讓卡片並排顯示 */
+            }
+            .flashcard.flipped {
+                transform: rotateY(0deg); /* 列印時不翻轉，只顯示正面 */
+            }
+            .flashcard-back {
+                display: flex; /* 確保背面內容顯示 */
+                justify-content: center;
+                align-items: center;
+                color: #c2410c; /* 深橘色文字 */
+                background-color: #ffe0b2; /* 淺橘色 */
+            }
+            .flashcard-front {
+                display: none; /* 列印時隱藏正面 */
+            }
+            .print-instructions {
+                display: none; /* 列印時隱藏說明 */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="w-full text-center mb-8 print-instructions">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">國小英檢單字字卡</h1>
+        <p class="text-lg text-gray-600">點擊字卡可以翻轉，查看中文翻譯。</p>
+        <p class="text-lg text-gray-600">點擊字卡時也會**播放英文單字的語音**。</p>
+        <p class="text-lg text-gray-600">若要儲存為 PDF，請按下 <kbd>Ctrl + P</kbd> (Windows/Linux) 或 <kbd>Cmd + P</kbd> (Mac) 開啟列印選單，然後選擇「儲存為 PDF」。</p>
+        <div style="display:none" class="mt-4 p-4 bg-blue-100 rounded-lg shadow-md">
+            <p class="text-blue-800 text-base mb-2">**從檔案載入單字：**</p>
+            <p class="text-blue-700 text-sm mb-2">請準備一個純文字檔案 (.txt)，每行包含一個英文單字和其對應的中文翻譯，中間用**空格**或**逗號**隔開。</p>
+            <p class="text-blue-700 text-sm mb-4">範例：<br>
+                `animal 動物`<br>
+                `cat,貓`</p>
+            <input type="file" id="vocabularyFileInput" accept=".txt" class="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                hover:file:bg-blue-100"/>
+        </div>
+    </div>
+
+    <div id="flashcardContainer" class="w-full flex flex-col items-center">
+        <!-- 字卡類別區塊將會在這裡生成 -->
+    </div>
+
+    <script>
+        // 初始單字列表 (內容已從 uploaded:enlishword.txt 檔案載入)
+        let vocabulary = [
+          {	english	:"	grass	",	chinese	:"	草	"},
+{	english	:"	goose	",	chinese	:"	鵝	"},
+{	english	:"	garden	",	chinese	:"	花園	"},
+{	english	:"	goat	",	chinese	:"	山羊	"},
+{	english	:"	fox	",	chinese	:"	狐狸	"},
+{	english	:"	fish	",	chinese	:"	魚	"},
+{	english	:"	foot	",	chinese	:"	腳	"},
+{	english	:"	fly	",	chinese	:"	蒼蠅／飛	"},
+{	english	:"	bat	",	chinese	:"	蝙蝠	"},
+{	english	:"	bug	",	chinese	:"	小蟲	"},
+{	english	:"	cow	",	chinese	:"	母牛	"},
+{	english	:"	cat	",	chinese	:"	貓	"},
+{	english	:"	dog	",	chinese	:"	狗	"},
+{	english	:"	duck	",	chinese	:"	鴨子	"},
+{	english	:"	frog	",	chinese	:"	青蛙	"},
+{	english	:"	lamb	",	chinese	:"	小羊	"},
+{	english	:"	lion	",	chinese	:"	獅子	"},
+{	english	:"	lizard	",	chinese	:"	蜥蜴	"},
+{	english	:"	log	",	chinese	:"	原木	"},
+{	english	:"	leaf	",	chinese	:"	樹葉	"},
+{	english	:"	kitten	",	chinese	:"	小貓	"},
+{	english	:"	kangaroo	",	chinese	:"	袋鼠	"},
+{	english	:"	koala	",	chinese	:"	無尾熊	"},
+{	english	:"	kid	",	chinese	:"	小孩／小羊	"},
+{	english	:"	girl	",	chinese	:"	女孩	"},
+{	english	:"	boy	",	chinese	:"	男孩	"},
+{	english	:"	doll	",	chinese	:"	洋娃娃	"},
+{	english	:"	fan	",	chinese	:"	電風扇／粉絲	"},
+{	english	:"	lock	",	chinese	:"	鎖	"},
+{	english	:"	lamp	",	chinese	:"	檯燈	"},
+{	english	:"	kite	",	chinese	:"	風箏	"},
+{	english	:"	key	",	chinese	:"	鑰匙	"},
+{	english	:"	king	",	chinese	:"	國王	"},
+{	english	:"	jacket	",	chinese	:"	外套	"},
+{	english	:"	jar	",	chinese	:"	罐子	"},
+{	english	:"	jelly	",	chinese	:"	果凍	"},
+{	english	:"	party hat	",	chinese	:"	派對帽	"},
+{	english	:"	this is a bat	",	chinese	:"	這是一隻蝙蝠	"},
+{	english	:"	this is a boy	",	chinese	:"	這是一個男孩	"},
+{	english	:"	this is a bug	",	chinese	:"	這是一隻小蟲	"},
+{	english	:"	This is a dog	",	chinese	:"	這是一隻狗	"},
+{	english	:"	This is a doll	",	chinese	:"	這是一個洋娃娃	"},
+{	english	:"	This is a duck	",	chinese	:"	這是一隻鴨子	"},
+{	english	:"	This is a grass	",	chinese	:"	這是草	"},
+{	english	:"	This is a gift	",	chinese	:"	這是一份禮物	"},
+{	english	:"	This is a goose	",	chinese	:"	這是一隻鵝	"},
+{	english	:"	This is a garden	",	chinese	:"	這是一座花園	"},
+{	english	:"	This is a glue	",	chinese	:"	這是膠水	"},
+{	english	:"	This is a girl	",	chinese	:"	這是一個女孩	"},
+{	english	:"	This is a goat	",	chinese	:"	這是一隻山羊	"},
+{	english	:"	i see a cup	",	chinese	:"	我看到一個杯子	"},
+{	english	:"	i see a cow	",	chinese	:"	我看到一頭母牛	"},
+{	english	:"	i see a cat	",	chinese	:"	我看到一隻貓	"},
+{	english	:"	can you see the fox	",	chinese	:"	你看得到那隻狐狸嗎	"},
+{	english	:"	can you see the fish	",	chinese	:"	你看得到那些魚嗎	"},
+{	english	:"	can you see the foot	",	chinese	:"	你看得到那隻腳嗎	"},
+{	english	:"	can you see the fly	",	chinese	:"	你看得到那隻蒼蠅嗎	"},
+{	english	:"	can you see the frog	",	chinese	:"	你看得到那隻青蛙嗎	"},
+{	english	:"	can you see the form	",	chinese	:"	你看得到那張表格嗎	"},
+{	english	:"	can you see the fan	",	chinese	:"	你看得到那台電風扇嗎	"},
+{	english	:"	Look at the lamb	",	chinese	:"	看那隻小羊	"},
+{	english	:"	Look at the lion	",	chinese	:"	看那隻獅子	"},
+{	english	:"	Look at the lock	",	chinese	:"	看那個鎖	"},
+{	english	:"	Look at the lizard	",	chinese	:"	看那隻蜥蜴	"},
+{	english	:"	Look at the log	",	chinese	:"	看那根原木	"},
+{	english	:"	Look at the leaf	",	chinese	:"	看那片樹葉	"},
+{	english	:"	Look at the lamp	",	chinese	:"	看那盞檯燈	"},
+{	english	:"	Here is a kite	",	chinese	:"	這裡有一個風箏	"},
+{	english	:"	Here is a kitten	",	chinese	:"	這裡有一隻小貓	"},
+{	english	:"	Here is a kangaroo	",	chinese	:"	這裡有一隻袋鼠	"},
+{	english	:"	Here is a koala	",	chinese	:"	這裡有一隻無尾熊	"},
+{	english	:"	Here is a kid	",	chinese	:"	這裡有一個小孩	"},
+{	english	:"	Here is a key	",	chinese	:"	這裡有一把鑰匙	"},
+{	english	:"	Here is a king	",	chinese	:"	這裡有一位國王	"},
+{	english	:"	see the jeep	",	chinese	:"	看那輛吉普車	"},
+{	english	:"	see the jacket	",	chinese	:"	看那件外套	"},
+{	english	:"	see her jump	",	chinese	:"	看她跳起來	"},
+{	english	:"	see the jog	",	chinese	:"	看那段慢跑	"},
+{	english	:"	see the jet	",	chinese	:"	看那架噴射機	"},
+{	english	:"	see the jar	",	chinese	:"	看那個罐子	"},
+{	english	:"	see the jelly	",	chinese	:"	看那個果凍	"},
+{	english	:"	what do you eat at a party?	",	chinese	:"	你在派對上吃什麼？	"},
+{	english	:"	i eat birthday cake	",	chinese	:"	我吃生日蛋糕	"},
+{	english	:"	when is your birthday	",	chinese	:"	你的生日是什麼時候？	"},
+{	english	:"	my birthday is in December	",	chinese	:"	我的生日在十二月	"},
+
+
+
+        ];
+
+        const flashcardContainer = document.getElementById('flashcardContainer');
+        const vocabularyFileInput = document.getElementById('vocabularyFileInput');
+
+        // 檢查瀏覽器是否支援語音合成
+        if ('speechSynthesis' in window) {
+            console.log('Web Speech API 支援語音合成。');
+        } else {
+            console.warn('您的瀏覽器不支援 Web Speech API 語音合成功能。');
+        }
+
+        /**
+         * 根據單字的中文翻譯或英文單字本身判斷其類別
+         * @param {object} word - 包含 english 和 chinese 屬性的單字物件
+         * @returns {string} 單字所屬的類別名稱
+         */
+        function getCategory(word) {
+            const chinese = word.chinese;
+            const english = word.english.toLowerCase(); // 將英文單字轉為小寫以便匹配
+
+            // 定義用於分類的關鍵字列表
+            const categories = {
+                "動物/昆蟲": ["動物", "熊", "蜜蜂", "鳥", "蝴蝶", "貓", "雞", "牛", "狗", "鴨子", "大象", "魚", "青蛙", "河馬", "馬", "無尾熊", "獅子", "老鼠", "猴子", "熊貓", "寵物", "豬", "兔子", "綿羊", "蛇", "蜘蛛", "老虎", "烏龜", "鯨魚", "斑馬"],
+                "衣物/配件": ["衣服", "外套", "洋裝", "眼鏡", "帽子", "夾克", "長褲", "口袋", "襯衫", "鞋子", "短褲", "裙子", "襪子", "毛衣", "T恤", "傘", "wear"], // Added 'wear' as it's related to clothes
+                "顏色": ["黑色", "藍色", "咖啡色", "灰色", "綠色", "橘色", "粉紅色", "紫色", "紅色", "白色", "黃色", "color"],
+                "家庭成員": ["阿姨", "姑姑", "伯母", "舅媽", "哥哥", "弟弟", "堂兄", "堂弟", "堂姊", "堂妹", "爸爸", "女兒", "家庭", "家人", "母親", "祖父", "祖母", "外公", "外婆", "兒子", "姐姐", "妹妹", "叔叔", "舅舅", "姑丈", "姨丈", "父母親", "family", "parent"],
+                "食物/飲料": ["蘋果", "香蕉", "牛肉", "麵包", "早餐", "蛋糕", "糖果", "雞肉", "巧克力", "咖啡", "可樂", "餅乾", "晚餐", "鴨肉", "水餃", "蛋", "魚肉", "食物", "薯條", "水果", "葡萄", "漢堡", "冰淇淋", "果汁", "檸檬", "午餐", "餐", "牛奶", "麵", "橘子", "桃子", "派", "披薩", "豬肉", "南瓜", "米飯", "沙拉", "三明治", "湯", "草莓", "茶", "水", "西瓜", "hungry", "thirsty", "sweet", "yummy", "full", "eat", "drink", "taste"], 
+                "稱謂/人": ["小姐", "先生", "太太", "嬰兒", "男孩", "女孩", "小孩", "男人", "女人", "人", "baby", "boy", "girl", "kid", "man", "woman", "people", "person"],
+                "地點/自然景觀": ["海灘", "湖", "山", "河流", "大海", "銀行", "書店", "百貨公司", "消防站", "醫院", "日本", "市場", "電影院", "博物館", "辦公室", "公園", "警察局", "郵局", "餐廳", "洗手間", "商店", "超級市場", "臺灣", "英國", "美國", "動物園", "街道", "beach", "lake", "mountain", "river", "sea", "bank", "store", "market", "hospital", "park", "zoo", "street"],
+                "節日": ["聖誕節", "端午節", "復活節", "萬聖節", "中秋節", "Christmas", "Easter", "Halloween"],
+                "健康/身體部位": ["感冒", "頭痛", "生病", "強壯", "疲累", "牙痛", "手臂", "背", "耳朵", "眼睛", "臉", "腳", "頭髮", "手", "頭", "腿", "嘴巴", "鼻子", "牙齒", "cold", "sick", "tired", "arm", "back", "ear", "eye", "face", "foot", "hand", "head", "leg", "mouth", "nose", "tooth", "well", "hurt"], // Consolidated body and health
+                "居家/場所物品": ["浴室", "床", "臥房", "椅子", "電腦", "桌子", "餐廳", "門", "電扇", "地板", "電冰箱", "院子", "花園", "家", "房子", "鑰匙", "廚房", "燈", "客廳", "架子", "淋浴", "沙發", "牆壁", "窗戶", "bathroom", "bed", "bedroom", "chair", "computer", "desk", "door", "fan", "floor", "fridge", "garden", "home", "house", "key", "kitchen", "lamp", "living room", "refrigerator", "shelf", "shower", "sofa", "wall", "window"],
+                "動作/動詞": ["穿", "咬", "刷", "打電話", "關", "來", "哭", "做", "享受", "掉落", "感受", "感覺", "找", "得到", "收到", "給", "去", "走", "有", "幫助", "打", "碰撞", "希望", "趕快", "急忙", "受傷", "跳", "知道", "認識", "笑", "讓我們", "喜歡", "看", "看起來", "愛", "喜愛", "製造", "遇見", "會面", "想念", "需要", "開", "撿起", "接", "放", "看見", "展示", "坐下", "睡覺", "聞起來", "站立", "開始", "停下來", "攜帶", "拿取", "告訴", "感謝", "觸碰", "嘗試", "等", "等待", "醒來", "喚醒", "走路", "想要", "歡迎", "擔心", "回答", "問", "畫", "描畫", "聽", "閱讀", "說", "拼寫", "學習", "談話", "寫", "釣魚", "健行", "畫", "刷油漆", "玩", "跑", "唱歌", "游泳", "贏", "開車", "飛", "騎", "轉彎", "清理", "拖地", "掃", "洗", "cook", "do", "enjoy", "fall", "feel", "find", "get", "give", "go", "have", "help", "hit", "hope", "hurry", "hurt", "jump", "know", "laugh", "let's", "like", "look", "love", "make", "meet", "miss", "need", "open", "put", "see", "show", "sit", "sleep", "smell", "stand", "start", "stop", "take", "tell", "thank", "touch", "try", "wait", "wake", "walk", "want", "watch", "welcome", "worry", "clean", "mop", "sweep", "wash", "drive", "fly", "ride", "turn"],
+                "金錢/購物": ["元", "錢", "免費", "買", "dollar", "money", "free", "buy", "sale"],
+                "數字": ["八", "十八", "八十", "十一", "十五", "五十", "第一", "五", "四十", "四", "十四", "一百", "九", "十九", "九十", "一", "二", "eight", "eleven", "fifteen", "fifty", "first", "five", "forty", "four", "fourteen", "hundred", "nine", "nineteen", "ninety", "one", "ten", "two", "third", "second"], // Added common numbers and ordinals
+                "職業": ["男演員", "女演員", "廚師", "醫生", "司機", "駕駛員", "農夫", "工作", "職業", "郵差", "護士", "警察", "歌手", "軍人", "男服務生", "女服務生", "工作者", "actor", "cook", "doctor", "driver", "farmer", "job", "mailman", "nurse", "police officer", "singer", "soldier", "waiter", "waitress", "worker"],
+                "情緒/形容詞": ["生氣", "不好", "壞", "美麗", "漂亮", "無聊", "忙碌", "可愛", "興奮", "好", "開心", "高興", "重", "懶惰", "愉快", "宜人", "老", "年輕", "傷心", "難過", "矮", "聰明", "高", "瘦", "清涼", "不一樣", "髒", "簡單", "最喜歡", "很好", "很不錯", "有趣", "新", "僅有", "其他", "安靜", "準備好", "對", "抱歉", "確定", "濕", "很棒", "精彩", "angry", "bad", "beautiful", "bored", "boring", "busy", "cute", "excited", "exciting", "good", "happy", "heavy", "lazy", "mad", "nice", "old", "pretty", "sad", "short", "smart", "tall", "thin", "young", "cool", "different", "dirty", "easy", "favorite", "fine", "fun", "great", "hard", "hot", "interesting", "new", "OK", "only", "other", "quiet", "ready", "right", "sorry", "sure", "wet", "wonderful"],
+                "地點/方向/副詞": ["向後", "回原處", "這裡", "左邊", "那裡", "右邊", "快速", "慢", "早到", "晚到", "現在", "點鐘", "再一次", "又一次", "總是", "永遠", "離開", "也許", "不曾", "不", "沒有", "沒事", "唯一地", "真正地", "所以", "有時候", "仍然", "當然", "然後", "接著", "一起", "也", "太", "通常", "非常", "是", "back", "here", "left", "right", "there", "fast", "slow", "early", "late", "now", "again", "always", "away", "maybe", "never", "not", "only", "really", "so", "sometimes", "still", "then", "together", "too", "usually", "very", "yes"],
+                "學校/學習用品": ["美術", "藝術", "黑板", "書", "書本", "中文", "課", "班級", "教室", "英文", "橡皮擦", "膠水", "回家作業", "圖書館", "麥克筆", "數學", "音樂", "紙張", "體育", "筆", "鋼筆", "鉛筆", "圖片", "照片", "問題", "尺", "學校", "科學", "故事", "學生", "學習", "談話", "老師", "考試", "假期", "art", "blackboard", "book", "Chinese", "class", "classroom", "draw", "English", "eraser", "glue", "homework", "library", "listen", "marker", "math", "music", "paper", "PE", "pen", "pencil", "picture", "question", "read", "ruler", "say", "school", "science", "speak", "spell", "story", "student", "study", "talk", "teacher", "test", "vacation", "write"],
+                "運動/興趣/嗜好": ["球", "棒球", "籃球", "卡片", "跳舞", "玩偶", "鼓", "足球", "遊戲", "風箏", "電影", "鋼琴", "歌曲", "運動", "玩具", "旅行", "溜溜球", "ball", "baseball", "basketball", "card", "climb", "dance", "doll", "drum", "fish", "football", "game", "hike", "kite", "movie", "paint", "piano", "play", "run", "sing", "soccer", "song", "sport", "swim", "toy", "trip", "win", "yo-yo"],
+                "餐具": ["筷子", "杯子", "碟子", "盤子", "叉子", "玻璃杯", "刀子", "湯匙", "chopsticks", "cup", "dish", "fork", "glass", "knife", "spoon"],
+                "時間": ["下午", "四月", "八月", "時鐘", "天", "十二月", "傍晚", "秋天", "二月", "星期五", "一月", "七月", "六月", "三月", "五月", "星期一", "月", "早上", "晚上", "十一月", "十月", "星期六", "季節", "九月", "春天", "夏天", "星期日", "星期四", "時間", "今天", "明天", "星期二", "手錶", "星期三", "星期", "冬天", "年", "昨天", "afternoon", "April", "August", "clock", "day", "December", "evening", "fall", "February", "Friday", "January", "July", "June", "March", "May", "Monday", "month", "morning", "night", "November", "October", "Saturday", "season", "September", "spring", "summer", "Sunday", "Thursday", "time", "today", "tomorrow", "Tuesday", "watch", "Wednesday", "week", "winter", "year", "yesterday"],
+                "交通工具": ["飛機", "機場", "腳踏車", "船", "公車", "公車站", "汽車", "火車", "卡車", "摩托車", "捷運", "輕型機車", "船", "計程車", "車站", "airplane", "airport", "bicycle", "bike", "boat", "bus", "car", "motorcycle", "MRT", "plane", "scooter", "ship", "taxi", "train", "truck", "station", "bus stop"],
+                "天氣": ["多雲", "寒冷", "涼爽", "熱", "月亮", "下雨", "雨水", "彩虹", "下雨的", "多雨的", "天空", "下雪", "雪", "星星", "太陽", "晴朗", "出太陽", "颱風", "溫暖", "天氣", "潮濕", "風", "風大", "cloudy", "cold", "cool", "hot", "moon", "rain", "rainbow", "rainy", "sky", "snow", "star", "sun", "sunny", "typhoon", "warm", "weather", "wet", "wind", "windy"],
+                "冠詞/限定詞": ["一個", "每一個", "她的", "他的", "它的", "我的", "我們的", "那個", "這", "他們的", "這些", "這個", "那些", "你的", "你們的", "a", "an", "every", "her", "his", "its", "my", "our", "that", "the", "their", "these", "this", "those", "your"],
+                "代名詞": ["他", "她", "他(受詞)", "我", "它", "牠", "我(受詞)", "什麼都沒有", "他們(受詞)", "他們", "我們(受詞)", "我們", "你", "你們", "he", "her", "him", "I", "it", "me", "nothing", "she", "them", "they", "us", "we", "you"],
+                "助動詞": ["是", "可以", "將會", "be", "can", "do", "have", "will"],
+                "連接詞": ["和", "因為", "但是", "and", "because", "but"],
+                "感嘆詞": ["再見", "不好意思", "對不起", "哈囉", "嗨", "請", "bye", "excuse me", "goodbye", "hello", "hi", "please", "OK"],
+                "其他名詞/物品": ["生日", "瓶子", "箱子", "罐子", "手機", "夢", "電子郵件", "花", "樂趣", "禮物", "信", "派對", "照片", "機器人", "拍賣", "特價", "東西", "物", "票", "垃圾", "樹", "路", "方向", "字", "birthday", "bottle", "box", "can", "cellphone", "dream", "email", "flower", "fun", "gift", "mail", "party", "photo", "robot", "sale", "thing", "ticket", "trash", "tree", "way", "word"]
+            };
+
+            // 優先匹配中文翻譯
+            for (const category in categories) {
+                for (const keyword of categories[category]) {
+                    if (chinese.includes(keyword)) {
+                        return category;
+                    }
+                }
+            }
+
+            // 如果中文沒有明確匹配，則嘗試匹配英文單字（小寫）
+            for (const category in categories) {
+                for (const keyword of categories[category]) {
+                    if (english === keyword.toLowerCase()) { // 精確匹配英文單字
+                        return category;
+                    }
+                }
+            }
+
+            // 最後根據詞性判斷，如果中文翻譯包含詞性標註
+            if (chinese.includes("名詞")) return "名詞";
+            if (chinese.includes("動詞")) return "動詞";
+            if (chinese.includes("形容詞")) return "形容詞";
+            if (chinese.includes("副詞")) return "副詞";
+            if (chinese.includes("助動詞")) return "助動詞";
+            if (chinese.includes("代名詞")) return "代名詞";
+            if (chinese.includes("連接詞")) return "連接詞";
+            if (chinese.includes("感嘆詞")) return "感嘆詞";
+            if (chinese.includes("限定詞")) return "限定詞";
+            if (chinese.includes("冠詞")) return "冠詞/限定詞";
+            if (chinese.includes("數字")) return "數字";
+
+
+            return "其他"; // 默認類別
+        }
+
+        /**
+         * 根據當前的 vocabulary 陣列生成字卡並分類顯示
+         */
+        function generateFlashcards() {
+            flashcardContainer.innerHTML = ''; // 清空現有的字卡
+
+            // 根據類別對單字進行分組
+            const categorizedWords = {};
+            vocabulary.forEach(word => {
+                const category = getCategory(word);
+                if (!categorizedWords[category]) {
+                    categorizedWords[category] = [];
+                }
+                categorizedWords[category].push(word);
+            });
+
+            // 渲染每個類別的字卡區塊
+            for (const categoryName in categorizedWords) {
+                const categorySection = document.createElement('div');
+                categorySection.classList.add('category-section');
+
+                const categoryTitle = document.createElement('h2');
+                categoryTitle.classList.add('category-title');
+                categoryTitle.textContent = categoryName;
+                categorySection.appendChild(categoryTitle);
+
+                const flashcardGrid = document.createElement('div');
+                flashcardGrid.classList.add('flashcard-grid');
+
+                categorizedWords[categoryName].forEach(word => {
+                    const flashcard = document.createElement('div');
+                    flashcard.classList.add('flashcard');
+
+                    const front = document.createElement('div');
+                    front.classList.add('flashcard-front', 'flashcard-inner');
+                    front.textContent = word.english;
+
+                    const back = document.createElement('div');
+                    back.classList.add('flashcard-back', 'flashcard-inner');
+                    back.textContent = word.chinese;
+
+                    flashcard.appendChild(front);
+                    flashcard.appendChild(back);
+                    flashcardGrid.appendChild(flashcard);
+
+                    // 添加點擊事件，翻轉字卡並播放語音
+                    flashcard.addEventListener('click', () => {
+                        flashcard.classList.toggle('flipped');
+
+                        // 播放英文單字的語音
+                        if ('speechSynthesis' in window) {
+                            const utterance = new SpeechSynthesisUtterance(word.english);
+                            utterance.lang = 'en-US'; // 設定語言為美式英文
+                            utterance.rate = 0.7; // 設定語音速度，0.7 表示比正常速度慢一些
+                            window.speechSynthesis.speak(utterance);
+                        }
+                    });
+                });
+                categorySection.appendChild(flashcardGrid);
+                flashcardContainer.appendChild(categorySection);
+            }
+        }
+
+        // 監聽檔案輸入的變化
+        vocabularyFileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0]; // 取得選取的第一個檔案
+
+            if (file) {
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    const lines = content.split('\n'); // 按行分割內容
+                    const newVocabulary = [];
+
+                    lines.forEach(line => {
+                        const trimmedLine = line.trim();
+                        if (trimmedLine) { // 確保行不為空
+                            // 嘗試用空格或逗號分割
+                            const parts = trimmedLine.split(/[\s,]+/);
+                            if (parts.length >= 2) {
+                                newVocabulary.push({
+                                    english: parts[0],
+                                    chinese: parts.slice(1).join(' ') // 處理中文翻譯可能有多個詞的情況
+                                });
+                            }
+                        }
+                    });
+
+                    if (newVocabulary.length > 0) {
+                        vocabulary = newVocabulary; // 更新 vocabulary 陣列
+                        generateFlashcards(); // 重新生成字卡
+                        console.log('單字已從檔案載入並更新。');
+                    } else {
+                        console.warn('檔案內容無效或沒有可解析的單字。');
+                        alert('檔案內容無效或沒有可解析的單字，請檢查檔案格式。');
+                    }
+                };
+
+                reader.onerror = (e) => {
+                    console.error('讀取檔案時發生錯誤:', e);
+                    alert('讀取檔案時發生錯誤，請重試。');
+                };
+
+                reader.readAsText(file); // 以文字格式讀取檔案
+            }
+        });
+
+        // 頁面載入時先生成一次字卡 (使用初始的 vocabulary 陣列)
+        generateFlashcards();
+    </script>
+</body>
+</html>
